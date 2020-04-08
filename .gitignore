@@ -1,0 +1,10 @@
+/*.iml
+/**/*.iml
+/target
+/**/target
+/**/mvnw.cmd
+/**/mvnw
+/**/.idea
+/**/.mvn
+/.settings/
+/.project
