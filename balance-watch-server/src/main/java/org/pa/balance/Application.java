@@ -2,6 +2,7 @@ package org.pa.balance;
 
 import lombok.extern.slf4j.Slf4j;
 import org.pa.balance.model.*;
+import org.pa.balance.repository.TransactionBoardCrudRepo;
 import org.pa.balance.service.TransactionTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -56,15 +57,15 @@ public class Application {
 
 	//@PostConstruct
 	public void insertFakeData() {
-		TransactionBoardRepo tbrepo = ctx.getBean(TransactionBoardRepo.class);
+		TransactionBoardCrudRepo tbrepo = ctx.getBean(TransactionBoardCrudRepo.class);
 
-		TransactionBoard tb1 = new TransactionBoard();
+		TransactionBoardEntity tb1 = new TransactionBoardEntity();
 		tb1.setAcctId("067827");
 		tb1.setMonth(4);
 		tb1.setYear(2019);
 		tb1.setStartAmt(new BigDecimal("3500.50"));
 
-		TransactionBoard tb2 = new TransactionBoard();
+		TransactionBoardEntity tb2 = new TransactionBoardEntity();
 		tb2.setAcctId("067827");
 		tb2.setMonth(5);
 		tb2.setYear(2019);

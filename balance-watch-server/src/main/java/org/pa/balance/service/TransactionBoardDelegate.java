@@ -1,25 +1,43 @@
 package org.pa.balance.service;
 
-import org.pa.balance.model.TransactionBoard;
-import org.pa.balance.model.TransactionBoardRepo;
+import org.mapstruct.factory.Mappers;
+import org.pa.balance.client.model.Board;
+import org.pa.balance.model.TransactionBoardEntity;
+import org.pa.balance.repository.TransactionBoardDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransactionBoardDelegate {
 
     @Autowired
-    TransactionBoardRepo transactionBoardRepo;
+    TransactionBoardDao transactionBoardDao;
 
-    @Transactional
-    public void addTransactionBoard(TransactionBoard board) {
-        transactionBoardRepo.save(board);
+    public Board getTransactionBoard(Integer year, Integer month, String account) {
+        TransactionBoardEntity tbe = transactionBoardDao.getTransactionBoard(year, month, account);
+
+        TransactionBoardMapper mapper = Mappers.getMapper(TransactionBoardMapper.class);
+        Board b = mapper.fromEntityToDto(tbe);
+
+        return b;
     }
 
-    @Transactional
-    public TransactionBoard getTransactionBoard(Integer year, Integer month, String account) {
-        return transactionBoardRepo.findByYearAndMonthAndAcctId(year, month, account);
+    public Long addTransactionBoard(Board b) {
+        TransactionBoardMapper mapper = Mappers.getMapper(TransactionBoardMapper.class);
+        TransactionBoardEntity tbe = mapper.fromDtoToEntity(b);
+
+        TransactionBoardEntity tbex = transactionBoardDao.addTransactionBoard(tbe);
+
+        return tbex.getId();
     }
+
+    public Long updateTransactionBoard(Board b) {
+        TransactionBoardMapper mapper = Mappers.getMapper(TransactionBoardMapper.class);
+        TransactionBoardEntity tbe = mapper.fromDtoToEntity(b);
+
+        TransactionBoardEntity tbex = transactionBoardDao.updateTransactionBoard(tbe);
+        return tbex.getId();
+    }
+
 
 }

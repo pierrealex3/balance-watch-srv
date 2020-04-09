@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Entity(name="TransactionBoard")
 @Data
-public class TransactionBoard {
+public class TransactionBoardEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

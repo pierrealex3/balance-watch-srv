@@ -53,6 +53,30 @@ paths:
           schema:
             $ref: "#/definitions/Board"
       responses:
+        201:
+          description: "Success"
+          headers:
+            X-Internal-Id:
+              type: "integer"
+              format: "int64"
+              description: "Internal ID used by the database"
+        405:
+          description: "Invalid input"
+    put:
+      tags:
+        - "transaction boards"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "board that needs to be added"
+          required: true
+          schema:
+            $ref: "#/definitions/Board"
+      responses:
         405:
           description: "Invalid input"
 
@@ -60,9 +84,6 @@ definitions:
   Board:
     type: "object"
     properties:
-      id:
-        type: "integer"
-        format: "int64"
       year:
         type: "integer"
         format: "int32"
