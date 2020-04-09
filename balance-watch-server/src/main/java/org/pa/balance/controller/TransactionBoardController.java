@@ -1,29 +1,50 @@
 package org.pa.balance.controller;
 
-import org.pa.balance.client.api.TransactionBoardApi;
+import org.pa.balance.client.api.TransactionBoardsApi;
 import org.pa.balance.client.model.Board;
+import org.pa.balance.model.TransactionBoard;
+import org.pa.balance.service.TransactionBoardDelegate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.math.BigDecimal;
-
 @RestController
-public class TransactionBoardController implements TransactionBoardApi {
+public class TransactionBoardController implements TransactionBoardsApi {
+
+    @Autowired
+    TransactionBoardDelegate transactionBoardDelegate;
 
     @Override
-    public ResponseEntity<Board> transactionBoardYearMonthGet(Integer year, @Min(1) @Max(12) Integer month) {
+    public ResponseEntity<Board> transactionBoardsYearMonthAccountGet(Integer year, Integer month, String account) {
 
-        // TODO actual impl
-        Board b = new Board();
-        b.setAccount("ABC1234");
-        b.setId(13L);
-        b.setMonth(12);
-        b.setYear(1984);
-        b.setStartAmt(new BigDecimal("123.45"));
+        TransactionBoard tbe = transactionBoardDelegate.getTransactionBoard(year, month, account);
 
-        return new ResponseEntity<>( b, HttpStatus.OK);
+        if (tbe == null)
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        // TODO use MapStruct
+        Board tb = new Board();
+        tb.setId(tbe.getId());
+        tb.setAccount(tbe.getAcctId());
+        tb.setMonth(tbe.getMonth());
+        tb.setYear(tbe.getYear());
+        tb.setStartAmt(tbe.getStartAmt());
+
+        return new ResponseEntity<>( tb, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> transactionBoardsPost(Board body) {
+
+        // TODO use MapStruct
+        TransactionBoard tbe = new TransactionBoard();
+        tbe.setAcctId(body.getAccount());
+        tbe.setMonth(body.getMonth());
+        tbe.setYear(body.getYear());
+        tbe.setStartAmt(body.getStartAmt());
+
+        transactionBoardDelegate.addTransactionBoard(tbe);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);  // TODO build a clean response via MapStruct, once again
     }
 }

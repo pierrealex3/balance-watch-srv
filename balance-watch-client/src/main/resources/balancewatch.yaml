@@ -6,10 +6,10 @@ info:
 basePath: "/watch"
 
 paths:
-  /transactionBoard/{year}/{month}:
+  /transactionBoards/{year}/{month}/{account}:
     get:
       tags:
-        - "transaction board"
+        - "transaction boards"
       produces:
         - "application/json"
       parameters:
@@ -24,6 +24,10 @@ paths:
           type: "integer"
           minimum: 1
           maximum: 12
+        - name: "account"
+          in: "path"
+          required: true
+          type: "string"
       responses:
         200:
           description: "Success"
@@ -33,6 +37,25 @@ paths:
           description: "Invalid year/month supplied"
         404:
           description: "Board not found"
+  /transactionBoards:
+    post:
+      tags:
+        - "transaction boards"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "board that needs to be added"
+          required: true
+          schema:
+            $ref: "#/definitions/Board"
+      responses:
+        405:
+          description: "Invalid input"
+
 definitions:
   Board:
     type: "object"
@@ -46,6 +69,8 @@ definitions:
       month:
         type: "integer"
         format: "int32"
+        minimum: 1
+        maximum: 12
       startAmt:
         type: "number"
         format: "currency"
