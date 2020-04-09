@@ -6,7 +6,9 @@ import org.pa.balance.model.TransactionBoardEntity;
 import org.pa.balance.repository.TransactionBoardDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 @Service
 public class TransactionBoardDelegate {
 
@@ -22,7 +24,7 @@ public class TransactionBoardDelegate {
         return b;
     }
 
-    public Long addTransactionBoard(Board b) {
+    public Long addTransactionBoard(@TransactionBoardDateLimit(message="Allow creation of young transaction boards only") Board b) {
         TransactionBoardMapper mapper = Mappers.getMapper(TransactionBoardMapper.class);
         TransactionBoardEntity tbe = mapper.fromDtoToEntity(b);
 

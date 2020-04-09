@@ -3,6 +3,7 @@ package org.pa.balance.controller;
 import org.pa.balance.client.api.TransactionBoardsApi;
 import org.pa.balance.client.model.Board;
 import org.pa.balance.service.TransactionBoardDelegate;
+import org.pa.balance.service.TransactionBoardDateLimit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
