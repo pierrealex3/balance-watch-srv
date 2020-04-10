@@ -70,6 +70,12 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - in: "header"
+          name: "X-Internal-Id"
+          required: true
+          type: "integer"
+          format: "int64"
+          description: "Internal ID used by the database"
         - in: "body"
           name: "body"
           required: true

@@ -1,38 +1,51 @@
 package org.pa.balance.controller;
 
+import io.swagger.annotations.ApiParam;
 import org.pa.balance.client.api.TransactionsApi;
 import org.pa.balance.client.model.Transaction;
+import org.pa.balance.service.TransactionDelegate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
 public class TransactionController implements TransactionsApi {
 
+    @Autowired
+    TransactionDelegate transactionDelegate;
+
     @Override
-    public ResponseEntity<List<Transaction>> transactionsGet(@NotNull @Valid @RequestParam(value = "year", required = true) Integer year, @NotNull @Min(1) @Max(12) @Valid @RequestParam(value = "month", required = true) Integer month, @NotNull @Valid @RequestParam(value = "account", required = true) String account) {
-
-        // TODO change that crap
-        Transaction t = new Transaction();
-        t.setAccount("FAKE456");
-        t.setDate(LocalDate.of(2020, 3, 22));
-        t.setWay(Transaction.WayEnum.CREDIT);
-        t.setAmount(new BigDecimal("222.23"));
-        t.setType("Jeep");
-        t.setNote("every tuesday");
-        List<Transaction> fakeRes = Arrays.asList(t);
-
-        return new ResponseEntity<>(fakeRes, HttpStatus.OK);
-
+    public ResponseEntity<List<Transaction>> transactionsGet(Integer year, Integer month, String account) {
+        List<Transaction> transactions = transactionDelegate.getTransactions(year, month, account);
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<Void> transactionsPost(Transaction body) {
+        Long id = transactionDelegate.addTransaction(body);
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("X-Internal-Id", String.valueOf(id));
+
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<Void> transactionsPut(Long xInternalId, Transaction body) {
+        Long idx = transactionDelegate.updateTransaction(body, xInternalId);
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("X-Internal-Id", String.valueOf(idx));
+
+        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
+    }
+
+
 }
