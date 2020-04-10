@@ -19,5 +19,5 @@ public class Reminder {
     private String email;
 
     @OneToOne(mappedBy = "reminder")
-    Transaction transaction;
+    TransactionEntity transaction;
 }

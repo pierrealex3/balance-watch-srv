@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  description: "Transaction balance watch"
-  title: "Balance Watch"
+  description: "Transaction boards API"
+  title: "Balance Watch: Transaction boards API"
   version: "1.0.0"
 basePath: "/watch"
 

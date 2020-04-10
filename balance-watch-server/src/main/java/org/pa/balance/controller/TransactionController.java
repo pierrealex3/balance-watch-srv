@@ -1,47 +1,38 @@
 package org.pa.balance.controller;
 
-import org.pa.balance.model.dto.Transaction;
-import org.springframework.http.HttpHeaders;
+import org.pa.balance.client.api.TransactionsApi;
+import org.pa.balance.client.model.Transaction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
 @RestController
-public class TransactionController {
+public class TransactionController implements TransactionsApi {
 
-    @GetMapping(path="/ttss", produces = "application/json")
-    public ResponseEntity<List<Transaction>> getTransactions() {
-        Transaction t1 = new Transaction();
-        t1.setId(1L);
-        t1.setDesc("Invalidity insurance");
-        t1.setAmt(new BigDecimal("73.00"));
+    @Override
+    public ResponseEntity<List<Transaction>> transactionsGet(@NotNull @Valid @RequestParam(value = "year", required = true) Integer year, @NotNull @Min(1) @Max(12) @Valid @RequestParam(value = "month", required = true) Integer month, @NotNull @Valid @RequestParam(value = "account", required = true) String account) {
 
-        Transaction t2 = new Transaction();
-        t2.setId(2L);
-        t2.setDesc("Jeep");
-        t2.setAmt(new BigDecimal("182.61"));
+        // TODO change that crap
+        Transaction t = new Transaction();
+        t.setAccount("FAKE456");
+        t.setDate(LocalDate.of(2020, 3, 22));
+        t.setWay(Transaction.WayEnum.CREDIT);
+        t.setAmount(new BigDecimal("222.23"));
+        t.setType("Jeep");
+        t.setNote("every tuesday");
+        List<Transaction> fakeRes = Arrays.asList(t);
 
-        Transaction t3 = new Transaction();
-        t3.setId(3L);
-        t3.setDesc("Salary");
-        t3.setAmt(new BigDecimal("2696.36"));
+        return new ResponseEntity<>(fakeRes, HttpStatus.OK);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-
-        ResponseEntity<List<Transaction>> res = new ResponseEntity<>(Arrays.asList(t1, t2, t3), headers, HttpStatus.OK);
-
-        return res;
     }
-
-    @GetMapping(path = "/ttrs", produces = "application/json")
-    public String audi() {
-        return "audi ttrs";
-    }
-
 }
