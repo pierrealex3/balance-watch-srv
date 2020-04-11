@@ -34,7 +34,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Transaction"
+              $ref: "#/definitions/TransactionWrapper"
         400:
           description: "Invalid year/month/account supplied"
         404:
@@ -70,22 +70,25 @@ paths:
       produces:
         - "application/json"
       parameters:
-        - in: "header"
-          name: "X-Internal-Id"
-          required: true
-          type: "integer"
-          format: "int64"
-          description: "Internal ID used by the database"
         - in: "body"
           name: "body"
           required: true
           schema:
-            $ref: "#/definitions/Transaction"
+            $ref: "#/definitions/TransactionWrapper"
       responses:
         405:
           description: "Invalid input"
 
 definitions:
+  TransactionWrapper:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal ID used by the database"
+      data:
+        $ref: "#/definitions/Transaction"
   Transaction:
     type: "object"
     properties:

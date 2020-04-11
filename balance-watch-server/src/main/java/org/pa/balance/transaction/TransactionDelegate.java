@@ -2,6 +2,7 @@ package org.pa.balance.transaction;
 
 import org.mapstruct.factory.Mappers;
 import org.pa.balance.client.model.Transaction;
+import org.pa.balance.client.model.TransactionWrapper;
 import org.pa.balance.transaction.entity.TransactionEntity;
 import org.pa.balance.transaction.mapper.TransactionMapper;
 import org.pa.balance.transaction.repository.TransactionDao;
@@ -17,13 +18,18 @@ public class TransactionDelegate {
     @Autowired
     TransactionDao transactionDao;
 
-    public List<Transaction> getTransactions(Integer year, Integer month, String account) {
+    public List<TransactionWrapper> getTransactions(Integer year, Integer month, String account) {
         List<TransactionEntity> transactionEntities = transactionDao.getTransactions(year, month, account);
 
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
 
-        List<Transaction> transactions = new ArrayList<>();
-        transactionEntities.forEach( te -> transactions.add(mapper.fromEntityToDto(te)) );
+        List<TransactionWrapper> transactions = new ArrayList<>();
+        transactionEntities.forEach( te -> {
+            TransactionWrapper tw = new TransactionWrapper();
+            tw.setId(te.getId());
+            tw.setData(mapper.fromEntityToDto(te));
+            transactions.add(tw);
+        });
 
         return transactions;
     }
