@@ -1,4 +1,4 @@
-package org.pa.balance.service;
+package org.pa.balance.board.validation;
 
 import org.pa.balance.client.model.Board;
 import org.springframework.stereotype.Component;

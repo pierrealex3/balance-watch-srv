@@ -1,6 +1,7 @@
 package org.pa.balance.model;
 
 import lombok.Data;
+import org.pa.balance.transaction.entity.TransactionEntity;
 
 import javax.persistence.*;
 

@@ -1,6 +1,8 @@
-package org.pa.balance.service;
+package org.pa.balance.transaction.mapper;
 
-import org.pa.balance.model.TransactionEntity;
+import org.pa.balance.service.DateTranslator;
+import org.pa.balance.service.IndToAggr;
+import org.pa.balance.transaction.entity.TransactionEntity;
 
 import java.time.LocalDate;
 

@@ -1,18 +1,14 @@
-package org.pa.balance.controller;
+package org.pa.balance.transaction;
 
-import io.swagger.annotations.ApiParam;
 import org.pa.balance.client.api.TransactionsApi;
 import org.pa.balance.client.model.Transaction;
-import org.pa.balance.service.TransactionDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

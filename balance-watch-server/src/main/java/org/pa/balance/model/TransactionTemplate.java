@@ -2,6 +2,7 @@ package org.pa.balance.model;
 
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.pa.balance.transaction.entity.TransactionWay;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

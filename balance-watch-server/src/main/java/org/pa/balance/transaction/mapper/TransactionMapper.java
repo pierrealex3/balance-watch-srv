@@ -1,10 +1,12 @@
-package org.pa.balance.service;
+package org.pa.balance.transaction.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.pa.balance.client.model.Transaction;
-import org.pa.balance.model.TransactionEntity;
+import org.pa.balance.service.DateTranslator;
+import org.pa.balance.service.IndToAggr;
+import org.pa.balance.transaction.entity.TransactionEntity;
 
 @Mapper( uses = GeneralDates.class )
 public interface TransactionMapper {

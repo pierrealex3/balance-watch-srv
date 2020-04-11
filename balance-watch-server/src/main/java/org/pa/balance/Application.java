@@ -1,9 +1,11 @@
 package org.pa.balance;
 
 import lombok.extern.slf4j.Slf4j;
+import org.pa.balance.board.entity.TransactionBoardEntity;
 import org.pa.balance.model.*;
-import org.pa.balance.repository.TransactionBoardCrudRepo;
+import org.pa.balance.board.repository.TransactionBoardCrudRepo;
 import org.pa.balance.service.TransactionTemplateService;
+import org.pa.balance.transaction.entity.TransactionWay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

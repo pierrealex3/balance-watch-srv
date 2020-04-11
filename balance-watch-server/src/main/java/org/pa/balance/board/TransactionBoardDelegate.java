@@ -1,9 +1,11 @@
-package org.pa.balance.service;
+package org.pa.balance.board;
 
 import org.mapstruct.factory.Mappers;
+import org.pa.balance.board.mapper.TransactionBoardMapper;
+import org.pa.balance.board.validation.TransactionBoardDateLimit;
 import org.pa.balance.client.model.Board;
-import org.pa.balance.model.TransactionBoardEntity;
-import org.pa.balance.repository.TransactionBoardDao;
+import org.pa.balance.board.entity.TransactionBoardEntity;
+import org.pa.balance.board.repository.TransactionBoardDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;

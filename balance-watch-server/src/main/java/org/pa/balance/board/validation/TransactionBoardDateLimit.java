@@ -1,4 +1,4 @@
-package org.pa.balance.service;
+package org.pa.balance.board.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

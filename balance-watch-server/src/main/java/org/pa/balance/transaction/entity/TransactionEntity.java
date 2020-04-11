@@ -1,6 +1,7 @@
-package org.pa.balance.model;
+package org.pa.balance.transaction.entity;
 
 import lombok.Data;
+import org.pa.balance.model.Reminder;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

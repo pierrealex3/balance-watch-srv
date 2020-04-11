@@ -1,4 +1,4 @@
-package org.pa.balance.model;
+package org.pa.balance.board.entity;
 
 import lombok.Data;
 

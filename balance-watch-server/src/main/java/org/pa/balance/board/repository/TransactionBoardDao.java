@@ -1,7 +1,7 @@
-package org.pa.balance.repository;
+package org.pa.balance.board.repository;
 
 import org.pa.balance.error.EntityNotFoundException;
-import org.pa.balance.model.TransactionBoardEntity;
+import org.pa.balance.board.entity.TransactionBoardEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

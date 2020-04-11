@@ -1,9 +1,9 @@
-package org.pa.balance.service;
+package org.pa.balance.board.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.pa.balance.client.model.Board;
-import org.pa.balance.model.TransactionBoardEntity;
+import org.pa.balance.board.entity.TransactionBoardEntity;
 
 @Mapper
 public interface TransactionBoardMapper {

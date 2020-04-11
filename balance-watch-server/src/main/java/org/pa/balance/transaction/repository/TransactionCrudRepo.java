@@ -1,6 +1,6 @@
-package org.pa.balance.repository;
+package org.pa.balance.transaction.repository;
 
-import org.pa.balance.model.TransactionEntity;
+import org.pa.balance.transaction.entity.TransactionEntity;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

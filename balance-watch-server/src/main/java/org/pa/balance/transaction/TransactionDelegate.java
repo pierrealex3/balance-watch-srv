@@ -1,9 +1,10 @@
-package org.pa.balance.service;
+package org.pa.balance.transaction;
 
 import org.mapstruct.factory.Mappers;
 import org.pa.balance.client.model.Transaction;
-import org.pa.balance.model.TransactionEntity;
-import org.pa.balance.repository.TransactionDao;
+import org.pa.balance.transaction.entity.TransactionEntity;
+import org.pa.balance.transaction.mapper.TransactionMapper;
+import org.pa.balance.transaction.repository.TransactionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

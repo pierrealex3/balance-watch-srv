@@ -1,15 +1,14 @@
-package org.pa.balance.repository;
+package org.pa.balance.transaction.repository;
 
 import org.mapstruct.factory.Mappers;
 import org.pa.balance.error.EntityNotFoundException;
-import org.pa.balance.model.TransactionEntity;
-import org.pa.balance.service.TransactionMapper;
+import org.pa.balance.transaction.entity.TransactionEntity;
+import org.pa.balance.transaction.mapper.TransactionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class TransactionDao {
@@ -37,11 +36,8 @@ public class TransactionDao {
     @Transactional
     public Long updateTransaction(TransactionEntity t, Long id) {
 
-        Optional<TransactionEntity> te = crudRepo.findById(id);
-        if (te.isEmpty())
-            throw new EntityNotFoundException(String.format("No transaction found for : id=%d", id));
+        TransactionEntity mte = crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)) );
 
-        TransactionEntity mte = te.get();
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
 
         mapper.updateManagedWithDetached(t, mte);

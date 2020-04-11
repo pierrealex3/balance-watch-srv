@@ -1,4 +1,4 @@
-package org.pa.balance.model;
+package org.pa.balance.transaction.entity;
 
 public enum TransactionWay {
     DEBIT, CREDIT;
