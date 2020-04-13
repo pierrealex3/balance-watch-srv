@@ -7,7 +7,9 @@ import org.pa.balance.transaction.entity.TransactionWay;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Transaction_T")
@@ -16,7 +18,7 @@ public class TransactionTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long tt_id;
 
     @Column(nullable = false)
     private String type;
@@ -26,8 +28,8 @@ public class TransactionTemplate {
     @Column(columnDefinition = "ENUM('DEBIT', 'CREDIT')")
     private TransactionWay way;
 
-    @OneToMany(mappedBy = "transactionTemplate", cascade = CascadeType.ALL)
-    private List<Frequency> frequencyList = new ArrayList<>();
+    @ManyToMany(mappedBy = "transactionTemplateList", cascade = CascadeType.ALL)
+    private Set<Frequency> frequencyList = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "transactionTemplate", cascade = CascadeType.ALL)
     private List<Span> spanList = new ArrayList<>();
@@ -36,8 +38,6 @@ public class TransactionTemplate {
     @JoinColumn(name="reminder_t_id", referencedColumnName = "id")
     private ReminderTemplate reminderTemplate;
 
-
-
-
+    private String acctId;
 
 }

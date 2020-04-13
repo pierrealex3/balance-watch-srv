@@ -75,6 +75,26 @@
                             <apiPackage>org.pa.balance.client.api</apiPackage>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>transaction templates</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/transactiontemplates.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <configOptions>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                            </configOptions>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <generateApis>true</generateApis>
+                            <generateModels>true</generateModels>
+                            <modelPackage>org.pa.balance.client.model</modelPackage>
+                            <apiPackage>org.pa.balance.client.api</apiPackage>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

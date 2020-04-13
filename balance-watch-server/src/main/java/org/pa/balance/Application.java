@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Set;
 
 @Slf4j
 @EnableJpaRepositories
@@ -95,8 +96,8 @@ public class Application {
 		tt.setWay(TransactionWay.DEBIT);
 		tt.getFrequencyList().addAll(Arrays.asList(f1, f2));
 
-		f1.setTransactionTemplate(tt);
-		f2.setTransactionTemplate(tt);
+		f1.setTransactionTemplateList(Set.of(tt));
+		f2.setTransactionTemplateList(Set.of(tt));
 
 		TransactionTemplateRepo ttrepo = ctx.getBean(TransactionTemplateRepo.class);
 		ttrepo.save(tt);

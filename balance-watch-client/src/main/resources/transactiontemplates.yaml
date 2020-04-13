@@ -1,0 +1,195 @@
+swagger: "2.0"
+info:
+  description: "Transaction Templates API"
+  title: "Balance Watch: Transactions Templates API"
+  version: "1.0.0"
+basePath: "/watch"
+
+paths:
+  /frequencies:
+    get:
+      tags:
+        - "frequencies"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "account"
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: "success"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Frequency"
+        404:
+          description: "No transaction frequency found"
+    post:
+      tags:
+        - "frequencies"
+      produces:
+        - "application/json"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Frequency"
+      responses:
+        201:
+          description: "Success"
+          headers:
+            X-Internal-Id:
+              type: "integer"
+              format: "int64"
+              description: "Internal ID used by the database"
+        405:
+          description: "Invalid input"
+    put:
+      tags:
+        - "frequencies"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Frequency"
+      responses:
+        405:
+          description: "Invalid input"
+
+  /transactionsTemplates:
+    get:
+      tags:
+        - "transaction templates"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "account"
+          in: "query"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TTWrapper"
+        400:
+          description: "Invalid account supplied"
+        404:
+          description: "No transactions found"
+    post:
+      tags:
+        - "transaction templates"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/TTReq"
+      responses:
+        201:
+          description: "Success"
+          headers:
+            X-Internal-Id:
+              type: "integer"
+              format: "int64"
+              description: "Internal ID used by the database"
+        405:
+          description: "Invalid input"
+    put:
+      tags:
+        - "transaction templates"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/TTWrapper"
+      responses:
+        405:
+          description: "Invalid input"
+
+definitions:
+  TTWrapper:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        description: "Internal ID used by the database"
+      data:
+        $ref: "#/definitions/TTReq"
+  TTReq:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date
+      type:
+        type: string
+      amount:
+        type: number
+        format: currency
+      way:
+        enum:
+          - DEBIT
+          - CREDIT
+      frequencies:
+        type: array
+        items:
+          type: integer
+          format: int64
+      spans:
+        type: array
+        items:
+          $ref: "#/definitions/Span"
+      account:
+        type: "string"
+      accountConnection:
+        type: "string"
+  Span:
+    type: object
+    description: "active|inactive indicator"
+    properties:
+      startDate:
+        type: string
+        format: date
+      endDate:
+        type: string
+        format: date
+  FrequencyWrapper:
+    type: object
+    properties:
+      frequencies:
+        type: array
+        items:
+          $ref: "#/definitions/Frequency"
+  Frequency:
+    type: object
+    description: "Transaction frequency descriptor"
+    properties:
+      description:
+        type: string
+      algo:
+        type: string
+      note:
+        type: string
