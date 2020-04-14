@@ -41,7 +41,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/Frequency"
+              $ref: "#/definitions/FrequencyWrapper"
         404:
           description: "No transaction frequency found"
     post:
@@ -217,9 +217,11 @@ definitions:
   FrequencyWrapper:
     type: object
     properties:
-      frequencies:
-        type: array
-        items:
+        id:
+          type: integer
+          format: int64
+          description: "Internal ID used by the database"
+        data:
           $ref: "#/definitions/Frequency"
   Frequency:
     type: object

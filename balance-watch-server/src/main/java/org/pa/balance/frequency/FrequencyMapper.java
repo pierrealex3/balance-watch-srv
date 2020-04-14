@@ -10,6 +10,8 @@ public interface FrequencyMapper {
 
     @Mapping(target = "frequency_id", ignore = true)
     @Mapping(target = "transactionTemplateList", ignore = true)
-    public FrequencyEntity fromDtoToEntity(Frequency dto);
+    public FrequencyEntity fromDtoToEntity(Frequency d);
+
+    public Frequency fromEntityToDto(FrequencyEntity e);
 
 }
