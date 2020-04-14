@@ -2,6 +2,7 @@ package org.pa.balance.model;
 
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.pa.balance.frequency.entity.FrequencyEntity;
 import org.pa.balance.transaction.entity.TransactionWay;
 
 import javax.persistence.*;
@@ -29,7 +30,7 @@ public class TransactionTemplate {
     private TransactionWay way;
 
     @ManyToMany(mappedBy = "transactionTemplateList", cascade = CascadeType.ALL)
-    private Set<Frequency> frequencyList = new LinkedHashSet<>();
+    private Set<FrequencyEntity> frequencyList = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "transactionTemplate", cascade = CascadeType.ALL)
     private List<Span> spanList = new ArrayList<>();

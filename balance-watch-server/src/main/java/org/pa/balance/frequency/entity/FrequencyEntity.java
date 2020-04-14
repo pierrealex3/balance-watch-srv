@@ -1,6 +1,7 @@
-package org.pa.balance.model;
+package org.pa.balance.frequency.entity;
 
 import lombok.Data;
+import org.pa.balance.model.TransactionTemplate;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -9,7 +10,7 @@ import java.util.Set;
 @Entity
 @Table(name="Frequency")
 @Data
-public class Frequency {
+public class FrequencyEntity {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -19,6 +20,8 @@ public class Frequency {
     private String description;
     @Column(nullable = false)
     private String algo;
+    @Column
+    private String note;
 
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(

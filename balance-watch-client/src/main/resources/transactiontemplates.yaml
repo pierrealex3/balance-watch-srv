@@ -6,6 +6,24 @@ info:
 basePath: "/watch"
 
 paths:
+  /frequencies/{id}:
+    get:
+      tags:
+        - "frequencies"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Frequency"
+
   /frequencies:
     get:
       tags:
@@ -83,7 +101,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/TTWrapper"
+              $ref: "#/definitions/TTWrapperRes"
         400:
           description: "Invalid account supplied"
         404:
@@ -123,14 +141,16 @@ paths:
           name: "body"
           required: true
           schema:
-            $ref: "#/definitions/TTWrapper"
+            $ref: "#/definitions/TTWrapperReq"
       responses:
         405:
           description: "Invalid input"
 
 definitions:
-  TTWrapper:
+  TTWrapperReq:
     type: "object"
+    required:
+      - id
     properties:
       id:
         type: "integer"
@@ -138,6 +158,24 @@ definitions:
         description: "Internal ID used by the database"
       data:
         $ref: "#/definitions/TTReq"
+  TTWrapperRes:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: "Internal ID used by the database"
+      data:
+        $ref: "#/definitions/TTRes"
+  TTRes:
+    allOf:
+      - $ref: "#/definitions/TTReq"
+      - type: object
+        properties:
+          frequencies:
+            type: array
+            items:
+              $ref: "#/definitions/Frequency"
   TTReq:
     type: object
     properties:

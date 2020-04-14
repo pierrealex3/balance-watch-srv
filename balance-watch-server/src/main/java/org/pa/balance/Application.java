@@ -2,6 +2,8 @@ package org.pa.balance;
 
 import lombok.extern.slf4j.Slf4j;
 import org.pa.balance.board.entity.TransactionBoardEntity;
+import org.pa.balance.frequency.entity.FrequencyEntity;
+import org.pa.balance.frequency.repo.FrequencyRepo;
 import org.pa.balance.model.*;
 import org.pa.balance.board.repository.TransactionBoardCrudRepo;
 import org.pa.balance.service.TransactionTemplateService;
@@ -79,11 +81,11 @@ public class Application {
 
 		FrequencyRepo frepo = ctx.getBean(FrequencyRepo.class);
 
-		Frequency f1 = new Frequency();
+		FrequencyEntity f1 = new FrequencyEntity();
 		f1.setAlgo("WEEKLY_FRI");
 		f1.setDescription("Kindergarten");
 
-		Frequency f2 = new Frequency();
+		FrequencyEntity f2 = new FrequencyEntity();
 		f2.setAlgo("MONTH_LAST_DAY");
 		f2.setDescription("Kindergarten xtra");
 
