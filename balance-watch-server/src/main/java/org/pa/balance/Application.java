@@ -8,6 +8,7 @@ import org.pa.balance.model.*;
 import org.pa.balance.board.repository.TransactionBoardCrudRepo;
 import org.pa.balance.service.TransactionTemplateService;
 import org.pa.balance.transaction.entity.TransactionWay;
+import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -92,7 +93,7 @@ public class Application {
 		//frepo.save(f1);
 		//frepo.save(f2);
 
-		TransactionTemplate tt = new TransactionTemplate();
+		TransactionTemplateEntity tt = new TransactionTemplateEntity();
 		tt.setAmount(new BigDecimal("400.00"));
 		tt.setType("magic mountain kindergarten");
 		tt.setWay(TransactionWay.DEBIT);
@@ -104,7 +105,7 @@ public class Application {
 		TransactionTemplateRepo ttrepo = ctx.getBean(TransactionTemplateRepo.class);
 		ttrepo.save(tt);
 
-		TransactionTemplate tt2 = new TransactionTemplate();
+		TransactionTemplateEntity tt2 = new TransactionTemplateEntity();
 		tt2.setAmount(new BigDecimal("198.00"));
 		tt2.setType("jeep");
 		tt2.setWay(TransactionWay.DEBIT);

@@ -3,7 +3,7 @@ package org.pa.balance.service;
 
 import org.pa.balance.model.Span;
 import org.pa.balance.model.SpanRepo;
-import org.pa.balance.model.TransactionTemplate;
+import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 import org.pa.balance.model.TransactionTemplateRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +19,13 @@ public class TransactionTemplateService {
     @Autowired
     SpanRepo spanRepo;
 
-    public Iterable<TransactionTemplate> fetchAll() {
+    public Iterable<TransactionTemplateEntity> fetchAll() {
         return transactionTemplateRepo.findAll();
     }
 
     public void addDefaultSpan(Long ttid) {
 
-        TransactionTemplate tt = transactionTemplateRepo.findById(ttid).get();
+        TransactionTemplateEntity tt = transactionTemplateRepo.findById(ttid).get();
 
         Span s = new Span();
         s.setStartDate(LocalDate.now());

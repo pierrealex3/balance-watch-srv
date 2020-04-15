@@ -1,6 +1,7 @@
 package org.pa.balance.model;
 
 import lombok.Data;
+import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 
 import javax.persistence.*;
 
@@ -19,5 +20,5 @@ public class ReminderTemplate {
     private String email;
 
     @OneToOne(mappedBy = "reminderTemplate")
-    private TransactionTemplate transactionTemplate;
+    private TransactionTemplateEntity transactionTemplate;
 }

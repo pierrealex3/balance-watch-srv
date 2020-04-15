@@ -1,7 +1,8 @@
 package org.pa.balance.frequency.entity;
 
 import lombok.Data;
-import org.pa.balance.model.TransactionTemplate;
+import lombok.EqualsAndHashCode;
+import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Entity
 @Table(name="Frequency")
 @Data
+@EqualsAndHashCode(exclude={"transactionTemplateList"})
 public class FrequencyEntity {
 
     @Id
@@ -23,11 +25,6 @@ public class FrequencyEntity {
     @Column
     private String note;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(
-            name = "Frequency_TransactionTemplate",
-            joinColumns = { @JoinColumn(name="frequency_id") },
-            inverseJoinColumns = { @JoinColumn(name="tt_id") }
-            )
-    private Set<TransactionTemplate> transactionTemplateList = new LinkedHashSet<>();
+    @ManyToMany(mappedBy = "frequencyList", cascade = CascadeType.ALL)
+    private Set<TransactionTemplateEntity> transactionTemplateList = new LinkedHashSet<>();
 }

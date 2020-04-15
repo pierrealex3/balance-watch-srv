@@ -1,6 +1,7 @@
 package org.pa.balance.model;
 
 import lombok.Data;
+import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 
 import javax.persistence.*;
 
@@ -18,5 +19,5 @@ public class Span {
 
     @ManyToOne
     @JoinColumn(name="transaction_t_id", nullable = false)
-    private TransactionTemplate transactionTemplate;
+    private TransactionTemplateEntity transactionTemplate;
 }

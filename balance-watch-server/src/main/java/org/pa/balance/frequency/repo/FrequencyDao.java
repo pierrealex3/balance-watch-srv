@@ -4,10 +4,10 @@ import org.pa.balance.error.EntityNotFoundException;
 import org.pa.balance.frequency.entity.FrequencyEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Repository
@@ -16,16 +16,19 @@ public class FrequencyDao {
     @Autowired
     FrequencyRepo frequencyRepo;
 
+    @Transactional
     public Long addFrequency(FrequencyEntity fe) {
         FrequencyEntity fex = frequencyRepo.save(fe);
         return fex.getFrequency_id();
     }
 
+    @Transactional
     public FrequencyEntity getFrequency(Long id) {
         FrequencyEntity fe = frequencyRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No Frequency found for id: %d", id)) );
         return fe;
     }
 
+    @Transactional
     public List<FrequencyEntity> getFrequencies(String account) {
         List<FrequencyEntity> feList =  StreamSupport.stream(frequencyRepo.findAll().spliterator(), false).
                 filter( fe -> fe.getTransactionTemplateList().stream().anyMatch( tt -> account.equals(tt.getAcctId()) ) ).
