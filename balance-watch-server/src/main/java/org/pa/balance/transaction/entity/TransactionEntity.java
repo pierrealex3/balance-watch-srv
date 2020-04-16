@@ -27,8 +27,7 @@ public class TransactionEntity {
     private String acctId;
     private String acctIdConn;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="reminder_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
     private Reminder reminder;
 
 }

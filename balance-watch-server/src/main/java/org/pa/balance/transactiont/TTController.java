@@ -29,7 +29,7 @@ public class TTController implements TransactionsTemplatesApi {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("X-Internal-Id", String.valueOf(id));
 
-        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @Override
@@ -43,6 +43,6 @@ public class TTController implements TransactionsTemplatesApi {
     public ResponseEntity<List<TTWrapperRes>> transactionsTemplatesGet(@NotNull @Valid String account) {
         List<TTWrapperRes> ttwList = ttDelegate.getTransactionTemplates(account);
 
-        return new ResponseEntity<>(ttwList, HttpStatus.CREATED);
+        return new ResponseEntity<>(ttwList, HttpStatus.OK);
     }
 }

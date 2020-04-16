@@ -1,11 +1,11 @@
 package org.pa.balance.transactiont.entity;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.pa.balance.frequency.entity.FrequencyEntity;
-import org.pa.balance.model.ReminderTemplate;
-import org.pa.balance.model.Span;
 import org.pa.balance.transaction.entity.TransactionWay;
 
 import javax.persistence.*;
@@ -24,7 +24,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Transaction_T")
 @Data
-@EqualsAndHashCode(exclude={"frequencyList", "spanList"})
+@EqualsAndHashCode(exclude={"frequencyList", "spanList", "reminderTemplate"})
 public class TransactionTemplateEntity {
 
     @Id
@@ -48,12 +48,23 @@ public class TransactionTemplateEntity {
     private Set<FrequencyEntity> frequencyList = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "transactionTemplate", cascade = CascadeType.ALL)
-    private List<Span> spanList = new ArrayList<>();
+    private List<SpanEntity> spanList = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="reminder_t_id", referencedColumnName = "id")
-    private ReminderTemplate reminderTemplate;
+
+    @Setter(AccessLevel.NONE)
+    @OneToOne(mappedBy = "transactionTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ReminderTemplateEntity reminderTemplate;
 
     private String acctId;
+
+    /**
+     * PA @ 2020-04-15
+     * Required because the *owning side entity* of the asso {@link ReminderTemplateEntity} is gonna end up having its {@link TransactionTemplateEntity} template field persisted.
+     * @param t
+     */
+    public void setReminderTemplate(ReminderTemplateEntity t) {
+        this.reminderTemplate = t;
+        t.setTransactionTemplate(this);
+    }
 
 }

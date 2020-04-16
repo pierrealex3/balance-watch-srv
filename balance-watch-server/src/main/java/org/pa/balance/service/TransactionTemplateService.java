@@ -1,7 +1,7 @@
 package org.pa.balance.service;
 
 
-import org.pa.balance.model.Span;
+import org.pa.balance.transactiont.entity.SpanEntity;
 import org.pa.balance.model.SpanRepo;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 import org.pa.balance.model.TransactionTemplateRepo;
@@ -27,7 +27,7 @@ public class TransactionTemplateService {
 
         TransactionTemplateEntity tt = transactionTemplateRepo.findById(ttid).get();
 
-        Span s = new Span();
+        SpanEntity s = new SpanEntity();
         s.setStartDate(LocalDate.now());
         s.setTransactionTemplate(tt);
 

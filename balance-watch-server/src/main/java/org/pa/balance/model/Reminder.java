@@ -19,6 +19,7 @@ public class Reminder {
 
     private String email;
 
-    @OneToOne(mappedBy = "reminder")
+    @OneToOne
+    @JoinColumn(name="transaction_id", referencedColumnName = "id")
     TransactionEntity transaction;
 }

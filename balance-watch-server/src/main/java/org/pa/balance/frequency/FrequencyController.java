@@ -38,6 +38,6 @@ public class FrequencyController implements FrequenciesApi {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("X-Internal-Id", String.valueOf(id));
 
-        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 }

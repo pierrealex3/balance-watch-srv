@@ -204,6 +204,8 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Span"
+      reminderTemplate:
+        $ref: "#/definitions/ReminderTemplate"
       account:
         type: "string"
       accountConnection:
@@ -237,3 +239,15 @@ definitions:
         type: string
       note:
         type: string
+  ReminderTemplate:
+    type: object
+    description: "Reminder with a delay and email"
+    properties:
+      timeBefore:
+        type: integer
+        format: int64
+        description: "delay before reminder (seconds)"
+        minimum: 60
+      email:
+        type: string
+        format: email
