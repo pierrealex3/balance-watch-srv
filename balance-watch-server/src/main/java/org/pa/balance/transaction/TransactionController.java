@@ -1,6 +1,7 @@
 package org.pa.balance.transaction;
 
 import org.pa.balance.client.api.TransactionsApi;
+import org.pa.balance.client.api.XtransactionsApi;
 import org.pa.balance.client.model.Transaction;
 import org.pa.balance.client.model.TransactionWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +10,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.NativeWebRequest;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-public class TransactionController implements TransactionsApi {
+public class TransactionController implements TransactionsApi, XtransactionsApi {
 
     @Autowired
     TransactionDelegate transactionDelegate;
+
+    /**
+     * Note: method overriden default is present in both implemented interfaces
+     * @return
+     */
+    @Override
+    public Optional<NativeWebRequest> getRequest() {
+        return Optional.empty();
+    }
 
     @Override
     public ResponseEntity<List<TransactionWrapper>> transactionsGet(Integer year, Integer month, String account) {
@@ -45,4 +63,10 @@ public class TransactionController implements TransactionsApi {
     }
 
 
+    @Override
+    public ResponseEntity<List<Transaction>> xtransactionsGet(@NotNull @Valid Integer year, @NotNull @Min(1) @Max(12) @Valid Integer month, @NotNull @Valid Long ttId, @Valid LocalDate refTransactionDate) {
+        List<Transaction> transactions = transactionDelegate.generateTransactions(YearMonth.of(year, month), ttId, refTransactionDate);
+
+        return new ResponseEntity(transactions, HttpStatus.OK);
+    }
 }

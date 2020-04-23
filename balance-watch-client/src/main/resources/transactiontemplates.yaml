@@ -233,11 +233,9 @@ definitions:
     type: object
     description: "Transaction frequency descriptor"
     properties:
-      description:
+      algoTag:
         type: string
-      algo:
-        type: string
-      note:
+      algoSpec:
         type: string
   ReminderTemplate:
     type: object

@@ -1,7 +1,7 @@
 package org.pa.balance.frequency.repo;
 
-import org.pa.balance.frequency.entity.FrequencyEntity;
+import org.pa.balance.frequency.entity.FrequencyConfigEntity;
 import org.springframework.data.repository.CrudRepository;
 
-public interface FrequencyRepo extends CrudRepository<FrequencyEntity, Long> {
+public interface FrequencyRepo extends CrudRepository<FrequencyConfigEntity, Long> {
 }

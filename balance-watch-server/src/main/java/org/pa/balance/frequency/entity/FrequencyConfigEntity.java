@@ -1,7 +1,10 @@
 package org.pa.balance.frequency.entity;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import org.pa.balance.algo.entity.FrequencyStaticEntity;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 
 import javax.persistence.*;
@@ -9,22 +12,29 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="Frequency")
+@Table(name="FrequencyConfig")
 @Data
 @EqualsAndHashCode(exclude={"transactionTemplateList"})
-public class FrequencyEntity {
+public class FrequencyConfigEntity {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long frequency_id;
 
-    @Column(nullable = false)
-    private String description;
-    @Column(nullable = false)
-    private String algo;
+    @Setter(AccessLevel.NONE)
+    @ManyToOne
+    @JoinColumn(name = "algo_id", referencedColumnName = "id")
+    private FrequencyStaticEntity algoTag;
+
     @Column
-    private String note;
+    private String algoSpec;
 
     @ManyToMany(mappedBy = "frequencyList", cascade = CascadeType.ALL)
     private Set<TransactionTemplateEntity> transactionTemplateList = new LinkedHashSet<>();
+
+    // keep 2-sides of the association synchronized, that's in the contract!
+    public void setAlgoTag(FrequencyStaticEntity algoTag) {
+        this.algoTag = algoTag;
+        algoTag.getFrequencyConfigList().add(this);
+    }
 }

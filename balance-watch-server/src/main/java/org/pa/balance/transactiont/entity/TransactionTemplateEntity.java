@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.pa.balance.frequency.entity.FrequencyEntity;
+import org.pa.balance.frequency.entity.FrequencyConfigEntity;
 import org.pa.balance.transaction.entity.TransactionWay;
 
 import javax.persistence.*;
@@ -45,11 +45,10 @@ public class TransactionTemplateEntity {
             joinColumns=  { @JoinColumn(name="tt_id", referencedColumnName = "tt_id") },
             inverseJoinColumns = { @JoinColumn(name="frequency_id", referencedColumnName ="frequency_id") }
     )
-    private Set<FrequencyEntity> frequencyList = new LinkedHashSet<>();
+    private Set<FrequencyConfigEntity> frequencyList = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "transactionTemplate", cascade = CascadeType.ALL)
     private List<SpanEntity> spanList = new ArrayList<>();
-
 
     @Setter(AccessLevel.NONE)
     @OneToOne(mappedBy = "transactionTemplate", cascade = CascadeType.ALL, orphanRemoval = true)

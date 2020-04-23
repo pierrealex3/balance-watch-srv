@@ -5,10 +5,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.pa.balance.client.model.TTReq;
 import org.pa.balance.client.model.TTRes;
+import org.pa.balance.frequency.mapper.FrequencyMapper;
 import org.pa.balance.transactiont.entity.SpanEntity;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 
-@Mapper
+@Mapper(uses = FrequencyMapper.class )
 public interface TTMapper {
 
     @Mapping(target = "tt_id", ignore = true)
@@ -26,5 +27,7 @@ public interface TTMapper {
     @Mapping(target = "account", source = "acctId")
     @Mapping(target= "accountConnection", ignore = true)
     @Mapping(target = "frequencies", source = "frequencyList")
+    @Mapping(target = "spans", source = "spanList")
     TTRes fromEntityToDto(TransactionTemplateEntity te);
+
 }

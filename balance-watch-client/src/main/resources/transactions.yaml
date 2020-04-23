@@ -6,6 +6,43 @@ info:
 basePath: "/watch"
 
 paths:
+  /xtransactions:
+    get:
+      tags:
+        - "transactions"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "year"
+          in: "query"
+          required: true
+          type: "integer"
+          format: "int32"
+        - name: "month"
+          in: "query"
+          required: true
+          type: "integer"
+          minimum: 1
+          maximum: 12
+        - name: "ttId"
+          in: "query"
+          required: true
+          type: integer
+          format: int64
+        - name: "refTransactionDate"
+          in: "query"
+          required: false
+          type: string
+          format: date
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Transaction"
+        400:
+          description: "Invalid request supplied"
   /transactions:
     get:
       tags:
