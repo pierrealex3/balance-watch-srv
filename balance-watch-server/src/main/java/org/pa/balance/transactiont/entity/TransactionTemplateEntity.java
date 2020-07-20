@@ -56,6 +56,10 @@ public class TransactionTemplateEntity {
 
     private String acctId;
 
+    @ManyToOne
+    @JoinColumn(name = "tt_group_id", nullable = true)
+    private TransactionTemplateGroupEntity ttGroup;
+
     /**
      * PA @ 2020-04-15
      * Required because the *owning side entity* of the asso {@link ReminderTemplateEntity} is gonna end up having its {@link TransactionTemplateEntity} template field persisted.

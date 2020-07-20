@@ -53,8 +53,8 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
     }
 
     @Override
-    public ResponseEntity<Void> transactionsPut(TransactionWrapper body) {
-        Long idx = transactionDelegate.updateTransaction(body.getData(), body.getId());
+    public ResponseEntity<Void> transactionsIdPut(Long id, Transaction body) {
+        Long idx = transactionDelegate.updateTransaction(body, id);
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("X-Internal-Id", String.valueOf(idx));
