@@ -16,7 +16,9 @@ public class TransactionTemplateGroupEntity
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String definition;
+    private String description;
+
+    private String acctId;
 
     @OneToMany(mappedBy = "ttGroup")
     private List<TransactionTemplateEntity> transactionTemplateEntityList;
