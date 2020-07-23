@@ -5,6 +5,7 @@ import org.pa.balance.error.EntityNotFoundException;
 import org.pa.balance.frequency.entity.FrequencyConfigEntity;
 import org.pa.balance.frequency.repo.FrequencyRepo;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
+import org.pa.balance.transactiont.entity.TransactionTemplateGroupEntity;
 import org.pa.balance.transactiont.mapper.TTMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -25,8 +26,13 @@ public class TTRepo {
     @Autowired
     FrequencyRepo frequencyRepo;
 
+    @Autowired
+    TTGroupRepo ttGroupRepo;
+
     @Transactional
-    public Long add(TransactionTemplateEntity tte, List<Long> frequencyPkList) {
+    public Long add(TransactionTemplateEntity tte, List<Long> frequencyPkList, Long ttGroupId) {
+        TransactionTemplateGroupEntity ttge = ttGroupRepo.findById(ttGroupId);
+
         Set<FrequencyConfigEntity> feSet = new LinkedHashSet<>();
 
         frequencyPkList.forEach( frequencyPk -> {
@@ -39,6 +45,9 @@ public class TTRepo {
         feSet.forEach( fe -> {
             fe.getTransactionTemplateList().add(tte);
         } );
+
+        // TransactionTemplateEntity is on the owning side of the relationship - is there a need to map the other side here?
+        tte.setTtGroup(ttge);
 
         return ttCrudRepo.save(tte).getTt_id();
     }
@@ -82,5 +91,17 @@ public class TTRepo {
 
         TransactionTemplateEntity tte = ttCrudRepo.findById(ttId).orElseThrow( () -> new EntityNotFoundException(String.format("No Transaction Template found for id: %d", ttId)) );
         return tte;
+    }
+
+    @Transactional
+    public List<TransactionTemplateEntity> getTransactionTemplatesForGroup(Long groupId)
+    {
+        List<TransactionTemplateEntity> tteList = StreamSupport.stream(ttCrudRepo.findAllByTtGroup_Id(groupId).spliterator(), false)
+                .collect(Collectors.toList());
+
+        if (tteList.isEmpty())
+            throw new EntityNotFoundException(String.format("No Transaction Template found for group: %s", groupId));
+
+        return tteList;
     }
 }

@@ -1,10 +1,11 @@
 package org.pa.balance.transactiont;
 
 import io.swagger.annotations.ApiParam;
-import org.apache.coyote.Response;
 import org.pa.balance.client.api.TransactionTemplateGroupsApi;
 import org.pa.balance.client.model.TTGroup;
 import org.pa.balance.client.model.TTGroupWrapper;
+import org.pa.balance.client.model.TTReq;
+import org.pa.balance.client.model.TTWrapperRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,9 @@ public class TTGroupController implements TransactionTemplateGroupsApi
     @Autowired
     TTGroupDelegate ttGroupDelegate;
 
+    @Autowired
+    TTDelegate ttDelegate;
+
     @Override
     public ResponseEntity<List<TTGroupWrapper>> transactionTemplateGroupsGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "account", required = true) String account) {
         List<TTGroupWrapper> ttGroupWrapperList = ttGroupDelegate.findAllByAccountId(account);
@@ -37,13 +41,29 @@ public class TTGroupController implements TransactionTemplateGroupsApi
         MultiValueMap<String, String> headers = new LinkedMultiValueMap();
         headers.add("X-Internal-Id", String.valueOf(id));
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<Void> transactionTemplateGroupsIdPut(@ApiParam(value = "",required=true) @PathVariable("id") Long id,@ApiParam(value = "" ,required=true )  @Valid @RequestBody TTGroup body) {
         ttGroupDelegate.update(id, body);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<List<TTWrapperRes>> transactionTemplateGroupsIdTemplatesGet(@ApiParam(value = "",required = true) @PathVariable("id") Long id) {
+        List<TTWrapperRes> ttList = ttDelegate.findAllTransactionTemplatesForGroup(id);
+        return new ResponseEntity<>(ttList, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> transactionTemplateGroupsIdTemplatesPost(@ApiParam(value = "",required = true) @PathVariable("id") Long id, @ApiParam(value = "",required = true) @Valid @RequestBody TTReq body) {
+        Long ttId = ttDelegate.addTransactionTemplate(body, id);
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("X-Internal-Id", String.valueOf(ttId));
+
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
 

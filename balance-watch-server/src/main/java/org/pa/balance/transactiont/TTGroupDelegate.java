@@ -3,9 +3,11 @@ package org.pa.balance.transactiont;
 import org.mapstruct.factory.Mappers;
 import org.pa.balance.client.model.TTGroup;
 import org.pa.balance.client.model.TTGroupWrapper;
+import org.pa.balance.client.model.TTWrapperRes;
 import org.pa.balance.transactiont.entity.TransactionTemplateGroupEntity;
 import org.pa.balance.transactiont.mapper.TTGroupMapper;
 import org.pa.balance.transactiont.repository.TTGroupRepo;
+import org.pa.balance.transactiont.repository.TTRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,5 +49,4 @@ public class TTGroupDelegate
 
         return res;
     }
-
 }

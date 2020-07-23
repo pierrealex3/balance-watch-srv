@@ -105,30 +105,8 @@ paths:
         400:
           description: "Invalid account supplied"
         404:
-          description: "No transactions found"
-    post:
-      tags:
-        - "transaction templates"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-      parameters:
-        - in: "body"
-          name: "body"
-          required: true
-          schema:
-            $ref: "#/definitions/TTReq"
-      responses:
-        201:
-          description: "Success"
-          headers:
-            X-Internal-Id:
-              type: "integer"
-              format: "int64"
-              description: "Internal ID used by the database"
-        405:
-          description: "Invalid input"
+          description: "No transactions templates found"
+  /transactionsTemplates/{id}:
     put:
       tags:
         - "transaction templates"
@@ -137,11 +115,16 @@ paths:
       produces:
         - "application/json"
       parameters:
-        - in: "body"
-          name: "body"
+        - in: path
+          name: id
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
           required: true
           schema:
-            $ref: "#/definitions/TTWrapperReq"
+            $ref: "#/definitions/TTReq"
       responses:
         405:
           description: "Invalid input"
@@ -212,6 +195,59 @@ paths:
           schema:
             $ref: "#/definitions/TTGroup"
       responses:
+        405:
+          description: "Invalid input"
+  /transactionTemplateGroups/{id}/templates:
+    get:
+      tags:
+        - "transaction templates"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TTWrapperRes"
+        400:
+          description: "Invalid account supplied"
+        404:
+          description: "No transaction templates found"
+    post:
+      tags:
+        - "transaction templates"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: integer
+          format: int64
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/TTReq"
+      responses:
+        201:
+          description: "Success"
+          headers:
+            X-Internal-Id:
+              type: "integer"
+              format: "int64"
+              description: "Internal ID used by the database"
         405:
           description: "Invalid input"
 definitions:

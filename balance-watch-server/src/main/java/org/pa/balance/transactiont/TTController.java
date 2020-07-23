@@ -1,15 +1,13 @@
 package org.pa.balance.transactiont;
 
-import org.apache.coyote.Response;
 import org.pa.balance.client.api.TransactionsTemplatesApi;
 import org.pa.balance.client.model.TTReq;
-import org.pa.balance.client.model.TTWrapperReq;
 import org.pa.balance.client.model.TTWrapperRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -23,18 +21,8 @@ public class TTController implements TransactionsTemplatesApi {
     TTDelegate ttDelegate;
 
     @Override
-    public ResponseEntity<Void> transactionsTemplatesPost(@Valid TTReq body) {
-        Long id = ttDelegate.addTransactionTemplate(body);
-
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("X-Internal-Id", String.valueOf(id));
-
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
-    }
-
-    @Override
-    public ResponseEntity<Void> transactionsTemplatesPut(@Valid TTWrapperReq body) {
-        ttDelegate.updateTransactionTemplate(body.getId(), body.getData());
+    public ResponseEntity<Void> transactionsTemplatesIdPut(@PathVariable("id") Long id, @Valid @RequestBody TTReq body) {
+        ttDelegate.updateTransactionTemplate(id, body);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -22,17 +22,28 @@ public class TTDelegate {
     /**
      * At this point, the validation has been done for a minimum number of 1 Frequency items in the dto - look at generated pojo for JSR-380 annotation.
      * @param body
+     * @param ttGroupId
      * @return
      */
-    public Long addTransactionTemplate(TTReq body) {
+    public Long addTransactionTemplate(TTReq body, Long ttGroupId) {
         TTMapper ttMapper = Mappers.getMapper(TTMapper.class);
         TransactionTemplateEntity tte = ttMapper.fromDtoToEntity(body);
-        Long id = ttRepo.add(tte, body.getFrequencies());
+        Long id = ttRepo.add(tte, body.getFrequencies(), ttGroupId);
         return id;
     }
 
     public List<TTWrapperRes> getTransactionTemplates(String account) {
         List<TransactionTemplateEntity> teList = ttRepo.getTransactionTemplates(account);
+        return mapEntityListToDtoWrapper(teList);
+    }
+
+    public List<TTWrapperRes> findAllTransactionTemplatesForGroup(Long groupId)
+    {
+        List<TransactionTemplateEntity> teList = ttRepo.getTransactionTemplatesForGroup(groupId);
+        return mapEntityListToDtoWrapper(teList);
+    }
+
+    List<TTWrapperRes> mapEntityListToDtoWrapper(List<TransactionTemplateEntity> teList) {
         List<TTWrapperRes> ttWrapperResList = new ArrayList<>();
         TTMapper ttMapper = Mappers.getMapper(TTMapper.class);
 
@@ -45,7 +56,6 @@ public class TTDelegate {
         });
 
         return ttWrapperResList;
-
     }
 
     public void updateTransactionTemplate(Long id, TTReq data) {

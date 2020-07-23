@@ -13,6 +13,7 @@ import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 public interface TTMapper {
 
     @Mapping(target = "tt_id", ignore = true)
+    @Mapping(target = "ttGroup", ignore = true) // required because this field cannot be modified via the DTO
     void updateManagedWithDetached(TransactionTemplateEntity detached, @MappingTarget TransactionTemplateEntity managed);
 
     @Mapping(target = "tt_id", ignore = true)
