@@ -10,10 +10,7 @@ import org.pa.balance.transaction.entity.TransactionWay;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * PA @ 2020-04-14
@@ -67,7 +64,7 @@ public class TransactionTemplateEntity {
      */
     public void setReminderTemplate(ReminderTemplateEntity t) {
         this.reminderTemplate = t;
-        t.setTransactionTemplate(this);
+        Optional.ofNullable(t).ifPresent( rte -> rte.setTransactionTemplate(this) );
     }
 
 }
