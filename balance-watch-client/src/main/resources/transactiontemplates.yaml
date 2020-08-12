@@ -33,7 +33,7 @@ paths:
       parameters:
         - name: "account"
           in: query
-          required: true
+          required: false
           type: string
       responses:
         200:
@@ -327,9 +327,11 @@ definitions:
       reminderTemplate:
         $ref: "#/definitions/ReminderTemplate"
       account:
-        type: "string"
+        type: string
       accountConnection:
-        type: "string"
+        type: string
+      note:
+        type: string
   Span:
     type: object
     description: "active|inactive indicator"
@@ -357,6 +359,10 @@ definitions:
         type: string
       algoSpec:
         type: string
+      description:
+        type: string
+      refDateRequired:
+        type: boolean
   ReminderTemplate:
     type: object
     description: "Reminder with a delay and email"

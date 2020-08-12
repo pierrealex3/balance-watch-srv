@@ -29,12 +29,13 @@ public class FrequencyConfigEntity {
     @Column
     private String algoSpec;
 
+    @Column
+    private String description;
+
     @ManyToMany(mappedBy = "frequencyList", cascade = CascadeType.ALL)
     private Set<TransactionTemplateEntity> transactionTemplateList = new LinkedHashSet<>();
 
-    // keep 2-sides of the association synchronized, that's in the contract!
     public void setAlgoTag(FrequencyStaticEntity algoTag) {
         this.algoTag = algoTag;
-        algoTag.getFrequencyConfigList().add(this);
     }
 }

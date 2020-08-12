@@ -18,10 +18,10 @@ public class FrequencyStaticEntity {
     private Long id;
 
     private String algoTag;
-    private String algoSpec;
+
     private Boolean refDateRequired;
 
-    @OneToMany(mappedBy = "algoTag")
+    @OneToMany(mappedBy = "algoTag", cascade = CascadeType.ALL)
     private List<FrequencyConfigEntity> frequencyConfigList;
 
 }

@@ -10,8 +10,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -27,7 +25,7 @@ public class FrequencyController implements FrequenciesApi {
     }
 
     @Override
-    public ResponseEntity<List<FrequencyWrapper>> frequenciesGet(@NotNull @Valid String account) {
+    public ResponseEntity<List<FrequencyWrapper>> frequenciesGet(String account) {
         List<FrequencyWrapper> frequencyWrapperList = frequencyDelegate.getFrequencies(account);
         return new ResponseEntity<>(frequencyWrapperList, HttpStatus.OK);
     }

@@ -14,6 +14,7 @@ public interface FrequencyMapper {
     public FrequencyConfigEntity fromDtoToEntity(Frequency d);
 
     @Mapping(target = "algoTag", source = "algoTag.algoTag")
+    @Mapping(target = "refDateRequired", source="algoTag.refDateRequired")
     public Frequency fromEntityToDto(FrequencyConfigEntity e);
 
 }

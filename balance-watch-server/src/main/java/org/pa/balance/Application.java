@@ -3,6 +3,7 @@ package org.pa.balance;
 import lombok.extern.slf4j.Slf4j;
 import org.pa.balance.algo.entity.FrequencyStaticEntity;
 import org.pa.balance.algo.repository.FrequencyStaticRepo;
+import org.pa.balance.frequency.entity.FrequencyConfigEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +15,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @EnableJpaRepositories
@@ -37,18 +41,33 @@ public class Application {
 		return factory -> factory.setContextPath("/app");
 	}
 
+	// TODO remove that once Cloud Database is online
 	@PostConstruct
 	public void insertFakeData() {
 
 		FrequencyStaticEntity f = new FrequencyStaticEntity();
 		f.setAlgoTag("BI_WEEKLY");
-		f.setAlgoSpec(null);
-		f.setRefDateRequired(Boolean.FALSE);
+		f.setRefDateRequired(Boolean.TRUE);
+
+		FrequencyConfigEntity fe = new FrequencyConfigEntity();
+		fe.setAlgoSpec("TUESDAY");
+		fe.setDescription("Tuesday - every two weeks");
+		fe.setAlgoTag(f);
+
+		List<FrequencyConfigEntity> l = new ArrayList<>(Arrays.asList(fe));
+		f.setFrequencyConfigList(l);
 
 		FrequencyStaticEntity ff = new FrequencyStaticEntity();
 		ff.setAlgoTag("TUE_WEEKLY");
-		ff.setAlgoSpec(null);
 		ff.setRefDateRequired(Boolean.FALSE);
+
+		FrequencyConfigEntity ffe = new FrequencyConfigEntity();
+		ffe.setAlgoSpec("");
+		ffe.setDescription("Tuesday - every week");
+		ffe.setAlgoTag(ff);;
+
+		List<FrequencyConfigEntity> ll = new ArrayList<>(Arrays.asList(ffe));
+		ff.setFrequencyConfigList(ll);
 
 		frequencyStaticRepo.save(f);
 		frequencyStaticRepo.save(ff);
