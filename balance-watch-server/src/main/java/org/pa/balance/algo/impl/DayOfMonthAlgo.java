@@ -6,11 +6,12 @@ import org.pa.balance.algo.PatternWrapper;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import java.time.*;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,17 +19,19 @@ import java.util.regex.Pattern;
 public class DayOfMonthAlgo extends AbstractFrequencyGenerator
 {
     Pattern level1Pattern = Pattern.compile("^dayOfMonth.*$");
-    Pattern level2Pattern = Pattern.compile("^dayOfMonth=(\\d+)$");
+    Pattern level2Pattern = Pattern.compile("^dayOfMonth=(\\d+)(;time=\\d+h\\d+m)?$");
 
     @Override
-    protected List<LocalDateTime> process(@NotNull String algo, @NotNull YearMonth ym, @Null LocalTime time) throws DateGenValidationException
+    protected List<LocalDateTime> process(@NotNull String algo, @NotNull YearMonth ym) throws DateGenValidationException
     {
-        LocalTime timepp = Optional.ofNullable(time).orElseGet( () -> LocalTime.of(0,0));
         Matcher m = level2Pattern.matcher(algo);
         String dayOfMonth = null;
+        LocalTime timepp = null;
 
-        if (m.find() && m.groupCount() == 1) {
+        if (m.find()) {
             dayOfMonth = m.group(1);
+            TimeMatchRes time = getTime(m.group(2));
+            timepp = LocalTime.of(time.getHours(), time.getMinutes());
         } else {
             throw new DateGenValidationException(Arrays.asList(
                     new DateGenValidationException.ValidationMessage(-1, String.format("Algo: (%s) Pattern: (%s) does not match algo spec: (%s)", getClass().getSimpleName(), level2Pattern, algo))));
