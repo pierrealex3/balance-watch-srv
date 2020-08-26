@@ -3,6 +3,7 @@ package org.pa.balance.algo.impl;
 import org.pa.balance.algo.AbstractFrequencyGenerator;
 import org.pa.balance.algo.DateGenValidationException;
 import org.pa.balance.algo.PatternWrapper;
+import org.pa.balance.error.InternalException;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -22,7 +23,7 @@ public class DayOfMonthAlgo extends AbstractFrequencyGenerator
     Pattern level2Pattern = Pattern.compile("^dayOfMonth=(\\d+)(;time=\\d+h\\d+m)?$");
 
     @Override
-    protected List<LocalDateTime> process(@NotNull String algo, @NotNull YearMonth ym) throws DateGenValidationException
+    protected List<LocalDateTime> process(@NotNull String algo, @NotNull YearMonth ym)
     {
         Matcher m = level2Pattern.matcher(algo);
         String dayOfMonth = null;
@@ -33,8 +34,7 @@ public class DayOfMonthAlgo extends AbstractFrequencyGenerator
             TimeMatchRes time = getTime(m.group(2));
             timepp = LocalTime.of(time.getHours(), time.getMinutes());
         } else {
-            throw new DateGenValidationException(Arrays.asList(
-                    new DateGenValidationException.ValidationMessage(-1, String.format("Algo: (%s) Pattern: (%s) does not match algo spec: (%s)", getClass().getSimpleName(), level2Pattern, algo))));
+            throw new InternalException(String.format("Algo: (%s) Pattern: (%s) does not match algo spec: (%s)", getClass().getSimpleName(), level2Pattern, algo));
         }
 
         try

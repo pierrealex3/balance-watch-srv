@@ -73,6 +73,12 @@
                             <generateModels>true</generateModels>
                             <modelPackage>org.pa.balance.client.model</modelPackage>
                             <apiPackage>org.pa.balance.client.api</apiPackage>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
+                            </importMappings>
                         </configuration>
                     </execution>
                     <execution>

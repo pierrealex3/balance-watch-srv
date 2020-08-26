@@ -44,6 +44,10 @@ public class TransactionTemplateEntity {
     )
     private Set<FrequencyConfigEntity> frequencyList = new LinkedHashSet<>();
 
+    // this field holds a formatted string that describes a supported frequency descriptor
+    // upon TT POST/PUT, the client app is responsible for providing it in compliance with the supported frequency descriptor set.
+    private String frequencyDescriptor;
+
     @OneToMany(mappedBy = "transactionTemplate", cascade = CascadeType.ALL)
     private List<SpanEntity> spanList = new ArrayList<>();
 

@@ -64,8 +64,8 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
 
 
     @Override
-    public ResponseEntity<List<Transaction>> xtransactionsGet(@NotNull @Valid Integer year, @NotNull @Min(1) @Max(12) @Valid Integer month, @NotNull @Valid Long ttId, @Valid LocalDate refTransactionDate) {
-        List<Transaction> transactions = transactionDelegate.generateTransactions(YearMonth.of(year, month), ttId, refTransactionDate);
+    public ResponseEntity<List<Transaction>> xtransactionsGet(@NotNull @Valid Integer year, @NotNull @Min(1) @Max(12) @Valid Integer month, @NotNull @Valid Long ttId) {
+        List<Transaction> transactions = transactionDelegate.generateTransactions(YearMonth.of(year, month), ttId);
 
         return new ResponseEntity(transactions, HttpStatus.OK);
     }

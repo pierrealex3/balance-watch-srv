@@ -17,6 +17,8 @@ public class TransactionEntity {
     private Integer year;
     private Integer month;
     private Integer day;
+    private Integer hours;
+    private Integer minutes;
     private String type;
     private BigDecimal Amount;
     @Enumerated(EnumType.STRING)
