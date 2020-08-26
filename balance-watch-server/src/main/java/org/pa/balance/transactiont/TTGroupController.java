@@ -2,9 +2,9 @@ package org.pa.balance.transactiont;
 
 import io.swagger.annotations.ApiParam;
 import org.pa.balance.client.api.TransactionTemplateGroupsApi;
+import org.pa.balance.client.model.TT;
 import org.pa.balance.client.model.TTGroup;
 import org.pa.balance.client.model.TTGroupWrapper;
-import org.pa.balance.client.model.TTReq;
 import org.pa.balance.client.model.TTWrapperRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +57,7 @@ public class TTGroupController implements TransactionTemplateGroupsApi
     }
 
     @Override
-    public ResponseEntity<Void> transactionTemplateGroupsIdTemplatesPost(@ApiParam(value = "",required = true) @PathVariable("id") Long id, @ApiParam(value = "",required = true) @Valid @RequestBody TTReq body) {
+    public ResponseEntity<Void> transactionTemplateGroupsIdTemplatesPost(@ApiParam(value = "",required = true) @PathVariable("id") Long id, @ApiParam(value = "",required = true) @Valid @RequestBody TT body) {
         Long ttId = ttDelegate.addTransactionTemplate(body, id);
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();

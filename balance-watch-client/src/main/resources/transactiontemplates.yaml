@@ -6,84 +6,6 @@ info:
 basePath: "/watch"
 
 paths:
-  /frequencies/{id}:
-    get:
-      tags:
-        - "frequencies"
-      produces:
-        - "application/json"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          type: integer
-          format: int64
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/Frequency"
-
-  /frequencies:
-    get:
-      tags:
-        - "frequencies"
-      produces:
-        - "application/json"
-      parameters:
-        - name: "account"
-          in: query
-          required: false
-          type: string
-      responses:
-        200:
-          description: "success"
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/FrequencyWrapper"
-        404:
-          description: "No transaction frequency found"
-    post:
-      tags:
-        - "frequencies"
-      produces:
-        - "application/json"
-      consumes:
-        - "application/json"
-      parameters:
-        - in: "body"
-          name: "body"
-          required: true
-          schema:
-            $ref: "#/definitions/Frequency"
-      responses:
-        201:
-          description: "Success"
-          headers:
-            X-Internal-Id:
-              type: "integer"
-              format: "int64"
-              description: "Internal ID used by the database"
-        405:
-          description: "Invalid input"
-    put:
-      tags:
-        - "frequencies"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-      parameters:
-        - in: "body"
-          name: "body"
-          required: true
-          schema:
-            $ref: "#/definitions/Frequency"
-      responses:
-        405:
-          description: "Invalid input"
-
   /transactionsTemplates:
     get:
       tags:
@@ -124,7 +46,7 @@ paths:
           name: body
           required: true
           schema:
-            $ref: "#/definitions/TTReq"
+            $ref: "#/definitions/TT"
       responses:
         405:
           description: "Invalid input"
@@ -239,7 +161,7 @@ paths:
           name: "body"
           required: true
           schema:
-            $ref: "#/definitions/TTReq"
+            $ref: "#/definitions/TT"
       responses:
         201:
           description: "Success"
@@ -267,17 +189,6 @@ definitions:
         type: string
       account:
         type: string
-  TTWrapperReq:
-    type: "object"
-    required:
-      - id
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-        description: "Internal ID used by the database"
-      data:
-        $ref: "#/definitions/TTReq"
   TTWrapperRes:
     type: object
     properties:
@@ -286,23 +197,14 @@ definitions:
         format: int64
         description: "Internal ID used by the database"
       data:
-        $ref: "#/definitions/TTRes"
-  TTRes:
-    allOf:
-      - $ref: "#/definitions/TTReq"
-      - type: object
-        properties:
-          frequencies:
-            type: array
-            items:
-              $ref: "#/definitions/Frequency"
-  TTReq:
+        $ref: "#/definitions/TT"
+  TT:
     type: object
     required:
       - type
       - amount
       - way
-      - frequencies
+      - frequency
       - account
     properties:
       type:
@@ -314,12 +216,8 @@ definitions:
         enum:
           - DEBIT
           - CREDIT
-      frequencies:
-        type: array
-        minItems: 1
-        items:
-          type: integer
-          format: int64
+      frequency:
+        type: string
       spans:
         type: array
         items:
@@ -342,27 +240,6 @@ definitions:
       endDate:
         type: string
         format: date
-  FrequencyWrapper:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-        description: "Internal ID used by the database"
-      data:
-        $ref: "#/definitions/Frequency"
-  Frequency:
-    type: object
-    description: "Transaction frequency descriptor"
-    properties:
-      algoTag:
-        type: string
-      algoSpec:
-        type: string
-      description:
-        type: string
-      refDateRequired:
-        type: boolean
   ReminderTemplate:
     type: object
     description: "Reminder with a delay and email"

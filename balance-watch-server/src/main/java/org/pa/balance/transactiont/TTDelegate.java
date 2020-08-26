@@ -1,8 +1,7 @@
 package org.pa.balance.transactiont;
 
 import org.mapstruct.factory.Mappers;
-import org.pa.balance.client.model.TTReq;
-import org.pa.balance.client.model.TTRes;
+import org.pa.balance.client.model.TT;
 import org.pa.balance.client.model.TTWrapperRes;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 import org.pa.balance.transactiont.mapper.TTMapper;
@@ -25,10 +24,10 @@ public class TTDelegate {
      * @param ttGroupId
      * @return
      */
-    public Long addTransactionTemplate(TTReq body, Long ttGroupId) {
+    public Long addTransactionTemplate(TT body, Long ttGroupId) {
         TTMapper ttMapper = Mappers.getMapper(TTMapper.class);
         TransactionTemplateEntity tte = ttMapper.fromDtoToEntity(body);
-        Long id = ttRepo.add(tte, body.getFrequencies(), ttGroupId);
+        Long id = ttRepo.add(tte, ttGroupId);
         return id;
     }
 
@@ -48,7 +47,7 @@ public class TTDelegate {
         TTMapper ttMapper = Mappers.getMapper(TTMapper.class);
 
         teList.forEach( te -> {
-            TTRes ttRes = ttMapper.fromEntityToDto(te);
+            TT ttRes = ttMapper.fromEntityToDto(te);
             TTWrapperRes ttWrapperRes = new TTWrapperRes();
             ttWrapperRes.setId(te.getTt_id());
             ttWrapperRes.setData(ttRes);
@@ -58,9 +57,9 @@ public class TTDelegate {
         return ttWrapperResList;
     }
 
-    public void updateTransactionTemplate(Long id, TTReq data) {
+    public void updateTransactionTemplate(Long id, TT data) {
         TTMapper ttMapper = Mappers.getMapper(TTMapper.class);
         TransactionTemplateEntity tte = ttMapper.fromDtoToEntity(data);
-        ttRepo.update(id, tte, data.getFrequencies());
+        ttRepo.update(id, tte);
     }
 }

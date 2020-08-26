@@ -73,7 +73,7 @@ public class TransactionDelegate {
     public List<Transaction> generateTransactions(YearMonth yearMonth, Long ttId) {
 
         TransactionTemplateEntity tte = transactionTemplateDao.findById(ttId);
-        String frequencyDescriptor = tte.getFrequencyDescriptor();
+        String frequencyDescriptor = tte.getFrequency();
         List<LocalDateTime> genTransactionDateList = frequencyGeneratorLocalizer.localize(frequencyDescriptor).generate(frequencyDescriptor, yearMonth);
 
         return genTransactionDateList.stream().map( d -> {

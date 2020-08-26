@@ -1,7 +1,7 @@
 package org.pa.balance.transactiont;
 
 import org.pa.balance.client.api.TransactionsTemplatesApi;
-import org.pa.balance.client.model.TTReq;
+import org.pa.balance.client.model.TT;
 import org.pa.balance.client.model.TTWrapperRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class TTController implements TransactionsTemplatesApi {
     TTDelegate ttDelegate;
 
     @Override
-    public ResponseEntity<Void> transactionsTemplatesIdPut(@PathVariable("id") Long id, @Valid @RequestBody TTReq body) {
+    public ResponseEntity<Void> transactionsTemplatesIdPut(@PathVariable("id") Long id, @Valid @RequestBody TT body) {
         ttDelegate.updateTransactionTemplate(id, body);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

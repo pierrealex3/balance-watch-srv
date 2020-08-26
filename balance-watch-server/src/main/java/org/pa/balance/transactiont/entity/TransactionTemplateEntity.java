@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.pa.balance.frequency.entity.FrequencyConfigEntity;
 import org.pa.balance.transaction.entity.TransactionWay;
 
 import javax.persistence.*;
@@ -36,17 +35,9 @@ public class TransactionTemplateEntity {
     @Column(columnDefinition = "ENUM('DEBIT', 'CREDIT')")
     private TransactionWay way;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "TT_Frequency",
-            joinColumns=  { @JoinColumn(name="tt_id", referencedColumnName = "tt_id") },
-            inverseJoinColumns = { @JoinColumn(name="frequency_id", referencedColumnName ="frequency_id") }
-    )
-    private Set<FrequencyConfigEntity> frequencyList = new LinkedHashSet<>();
-
     // this field holds a formatted string that describes a supported frequency descriptor
     // upon TT POST/PUT, the client app is responsible for providing it in compliance with the supported frequency descriptor set.
-    private String frequencyDescriptor;
+    private String frequency;
 
     @OneToMany(mappedBy = "transactionTemplate", cascade = CascadeType.ALL)
     private List<SpanEntity> spanList = new ArrayList<>();
