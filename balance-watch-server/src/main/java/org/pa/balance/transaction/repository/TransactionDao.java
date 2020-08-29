@@ -45,7 +45,9 @@ public class TransactionDao {
         return ute.getId();
     }
 
-
-
-
+    @Transactional
+    public TransactionEntity getTransaction(Long id)
+    {
+        return crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)));
+    }
 }

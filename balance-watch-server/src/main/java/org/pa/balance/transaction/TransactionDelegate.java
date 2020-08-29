@@ -64,29 +64,49 @@ public class TransactionDelegate {
     }
 
     /**
-     * Return the list of generated Transactions, based on a Transaction Template.
+     * Return the list of generated (and persisted) Transactions, based on a Transaction Template.
      * Note: the previous transaction date may be required for some transaction date generation algorithms.
      * @param yearMonth
      * @param ttId
      * @return
      */
-    public List<Transaction> generateTransactions(YearMonth yearMonth, Long ttId) {
+    public List<TransactionWrapper> generateTransactions(YearMonth yearMonth, Long ttId) {
 
         TransactionTemplateEntity tte = transactionTemplateDao.findById(ttId);
         String frequencyDescriptor = tte.getFrequency();
         List<LocalDateTime> genTransactionDateList = frequencyGeneratorLocalizer.localize(frequencyDescriptor).generate(frequencyDescriptor, yearMonth);
 
+        TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         return genTransactionDateList.stream().map( d -> {
-            Transaction t = new Transaction();
-            t.setDate(d);
-            t.setType(tte.getType());
-            t.setAmount(tte.getAmount());
-            t.setWay(Transaction.WayEnum.fromValue(tte.getWay().toString()));
-            t.setNote(tte.getNote());
-            t.setAccount(tte.getAcctId());  // TODO should add the connAccountId as well
 
-            return t;
+            TransactionEntity te = new TransactionEntity();
+            te.setYear(d.getYear());
+            te.setMonth(d.getMonthValue());
+            te.setDay(d.getDayOfMonth());
+            te.setHours(d.getHour());
+            te.setMinutes(d.getMinute());
+
+            te.setType(tte.getType());
+            te.setAmount(tte.getAmount());
+            te.setWay(tte.getWay());
+            te.setNote(tte.getNote());
+            te.setAcctId(tte.getAcctId());  // TODO should add the connAccountId as well
+
+            Long tid = transactionDao.addTransaction(te);
+            Transaction t = mapper.fromEntityToDto(te);
+            TransactionWrapper tw = new TransactionWrapper();
+            tw.setId(tid);
+            tw.setData(t);
+
+            return tw;
         }).collect(Collectors.toList());
 
+    }
+
+    public Transaction getTransaction(Long id)
+    {
+        TransactionEntity te = transactionDao.getTransaction(id);
+        TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
+        return mapper.fromEntityToDto(te);
     }
 }

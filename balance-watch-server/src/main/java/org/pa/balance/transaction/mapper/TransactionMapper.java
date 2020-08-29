@@ -22,6 +22,8 @@ public interface TransactionMapper {
     @Mapping(target = "year", source = "date.year")
     @Mapping(target = "month", source = "date.monthValue")
     @Mapping(target = "day", source = "date.dayOfMonth")
+    @Mapping(target = "hours", source = "date.hour")
+    @Mapping(target = "minutes", source = "date.minute")
     @Mapping(target = "amount", source = "amount")
     @Mapping(target = "acctId", source = "account")
     @Mapping(target = "acctIdConn", source = "accountConnection")

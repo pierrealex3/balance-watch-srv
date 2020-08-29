@@ -1,5 +1,6 @@
 package org.pa.balance.transaction;
 
+import org.apache.coyote.Response;
 import org.pa.balance.client.api.TransactionsApi;
 import org.pa.balance.client.api.XtransactionsApi;
 import org.pa.balance.client.model.Transaction;
@@ -64,9 +65,16 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
 
 
     @Override
-    public ResponseEntity<List<Transaction>> xtransactionsGet(@NotNull @Valid Integer year, @NotNull @Min(1) @Max(12) @Valid Integer month, @NotNull @Valid Long ttId) {
-        List<Transaction> transactions = transactionDelegate.generateTransactions(YearMonth.of(year, month), ttId);
+    public ResponseEntity<List<TransactionWrapper>> xtransactionsGet(@NotNull @Valid Integer year, @NotNull @Min(1) @Max(12) @Valid Integer month, @NotNull @Valid Long ttId) {
+        List<TransactionWrapper> transactions = transactionDelegate.generateTransactions(YearMonth.of(year, month), ttId);
 
         return new ResponseEntity(transactions, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Transaction> transactionsIdGet(Long id)
+    {
+        Transaction t = transactionDelegate.getTransaction(id);
+        return new ResponseEntity<>(t, HttpStatus.OK);
     }
 }
