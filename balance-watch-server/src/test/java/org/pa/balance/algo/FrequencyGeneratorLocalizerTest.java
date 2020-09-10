@@ -110,9 +110,10 @@ class FrequencyGeneratorLocalizerTest
     }
 
     @Test
-    void test_weekly_algo_dateGen() {
+    void test_weekly_algo_everyweek_dateGen() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.SEPTEMBER, 9));
+        se.setEndDate(LocalDate.MAX);
         List<SpanEntity> l = Arrays.asList(se);
         final String algoSpec = "dayOfWeek=TUESDAY|everyWeek";
         AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
@@ -120,9 +121,26 @@ class FrequencyGeneratorLocalizerTest
         assertDoesNotThrow(() -> {
             List<LocalDateTime> transactionDateList = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), l);
             assertEquals(3, transactionDateList.size());
-            assertEquals(LocalDateTime.of(2020, Month.SEPTEMBER, 15, 0, 0), transactionDateList.get(0));
-            assertEquals(LocalDateTime.of(2020, Month.SEPTEMBER, 22, 0, 0), transactionDateList.get(1));
-            assertEquals(LocalDateTime.of(2020, Month.SEPTEMBER, 29, 0, 0), transactionDateList.get(2));
+            assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 15, 0, 0)));
+            assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 22, 0, 0)));
+            assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 29, 0, 0)));
+        });
+    }
+
+    @Test
+    void test_weekly_algo_everyxweeks_dateGen() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> l = Arrays.asList(se);
+        final String algoSpec = "dayOfWeek=THURSDAY|everyXWeeks=2";
+        AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
+        assertEquals(WeeklyAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> transactionDateList = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), l);
+            assertEquals(2, transactionDateList.size());
+            assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 10, 0, 0)));
+            assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 24, 0, 0)));
         });
     }
 

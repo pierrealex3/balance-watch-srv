@@ -23,7 +23,7 @@ public abstract class AbstractFrequencyGenerator
 
     protected abstract List<LocalDateTime> process(String algo, YearMonth ym, List<SpanEntity> spanList) throws DateGenValidationException;
 
-    protected abstract PatternWrapper getPatternWrapper();
+    protected abstract Pattern getLevel1Pattern();
 
     protected static TimeMatchRes getTime(String timePatternStr) {
         TimeMatchRes res = TimeMatchRes.getDefault();
@@ -80,12 +80,27 @@ public abstract class AbstractFrequencyGenerator
      * @return
      */
     protected LocalDate getValidStartDateOrDefault(YearMonth ym, List<SpanEntity> spanList) {
-        LocalDate def = ym.atDay(1);    // default, start of month
-        return spanList.stream().map(SpanEntity::getStartDate).reduce(def, (a, b) -> {
-            if (a.getMonthValue() != b.getMonthValue())
+        LocalDate defStart = ym.atDay(1);    // default, start of month
+        SpanEntity def = new SpanEntity();
+        def.setStartDate(defStart);
+
+        return spanList.stream().reduce(def, (a, b) -> {
+            if (b.getStartDate().isBefore(a.getStartDate()) && isEndDateInTargetMonthOrAfter(b.getEndDate(), ym) ) {
+                return b;
+            } else if ( b.getStartDate().isAfter(a.getStartDate() ) && isStartDateInTargetMonthOrBefore(b.getStartDate(), ym) && isEndDateInTargetMonthOrAfter(b.getEndDate(), ym) ) {
+                return b;
+            } else
                 return a;
-            return a.getDayOfMonth() < b.getDayOfMonth() ? b : a;
-        });
+
+        }).getStartDate();
+    }
+
+    boolean isEndDateInTargetMonthOrAfter(LocalDate endDate, YearMonth ym) {
+        return endDate.isAfter(ym.minusMonths(1).atEndOfMonth());
+    }
+
+    boolean isStartDateInTargetMonthOrBefore(LocalDate startDate, YearMonth ym) {
+        return startDate.isBefore(ym.plusMonths(1).atDay(1));
     }
 
 

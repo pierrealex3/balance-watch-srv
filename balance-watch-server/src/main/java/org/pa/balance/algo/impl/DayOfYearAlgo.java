@@ -2,7 +2,6 @@ package org.pa.balance.algo.impl;
 
 import org.pa.balance.algo.AbstractFrequencyGenerator;
 import org.pa.balance.algo.DateGenValidationException;
-import org.pa.balance.algo.PatternWrapper;
 import org.pa.balance.error.InternalException;
 import org.pa.balance.transactiont.entity.SpanEntity;
 import org.springframework.stereotype.Component;
@@ -57,8 +56,8 @@ public class DayOfYearAlgo extends AbstractFrequencyGenerator
     }
 
     @Override
-    protected PatternWrapper getPatternWrapper()
+    protected Pattern getLevel1Pattern()
     {
-        return new PatternWrapper(level1Pattern, level2Pattern);
+        return level1Pattern;
     }
 }

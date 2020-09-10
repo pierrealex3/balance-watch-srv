@@ -2,8 +2,6 @@ package org.pa.balance.algo.impl;
 
 import org.pa.balance.algo.AbstractFrequencyGenerator;
 import org.pa.balance.algo.DateGenValidationException;
-import org.pa.balance.algo.PatternWrapper;
-import org.pa.balance.client.model.Span;
 import org.pa.balance.transactiont.entity.SpanEntity;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +16,7 @@ import java.util.regex.Pattern;
 public class WeeklyAlgo extends AbstractFrequencyGenerator
 {
 
-    Pattern level1Pattern = Pattern.compile("^dayOfWeek=.*\\|everyX?Week$");
+    Pattern level1Pattern = Pattern.compile("^dayOfWeek=.*\\|everyX?Week.*$");
 
     Pattern level2aPattern = Pattern.compile("^dayOfWeek=(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\\|everyWeek(;time=\\d+h\\d+m)?$");
 
@@ -48,30 +46,32 @@ public class WeeklyAlgo extends AbstractFrequencyGenerator
         LocalTime timex = LocalTime.of(time.getHours(), time.getMinutes());
 
         boolean firstDowFound = false;
-        while(startPoint.getMonth().equals(ym.getMonth())) {
+        while(startPoint.isBefore(ym.plusMonths(1).atDay(1))) {
             if (!firstDowFound) {
-                if (startPoint.getDayOfWeek() == DayOfWeek.valueOf(dow))
-                {
-                    firstDowFound = true;
-                    genList.add(LocalDateTime.of(startPoint, timex));
+                if (startPoint.getDayOfWeek() == DayOfWeek.valueOf(dow)) {
+                    if(startPoint.isAfter(ym.minusMonths(1).atEndOfMonth())) {  // in-sync with the DOW *and* in the YM under scope
+                        firstDowFound = true;
+                        genList.add(LocalDateTime.of(startPoint, timex));
+                        startPoint = startPoint.plusWeeks(weekLeap);
+                    } else {    // in-sync with the DOW but still not in the YM under scope
+                        startPoint = startPoint.plusWeeks(weekLeap);
+                    }
 
-                } else {
+                } else {    // not yet in-sync with the DOW
                     startPoint = startPoint.plusDays(1);
                 }
             } else {
+                genList.add(LocalDateTime.of(startPoint, timex));
                 startPoint = startPoint.plusWeeks(weekLeap);
-                if (startPoint.getMonth().equals(ym.getMonth())) {
-                    genList.add(LocalDateTime.of(startPoint, timex));
-                }
             }
         }
 
-        return genList;
+        return super.filterBasedOnSpan(genList, spanList);
     }
 
     @Override
-    protected PatternWrapper getPatternWrapper()    // TODO should be changed to getLevel1Pattern()
+    protected Pattern getLevel1Pattern()
     {
-        return new PatternWrapper(level1Pattern, level1Pattern);
+        return level1Pattern;
     }
 }

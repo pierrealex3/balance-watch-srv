@@ -13,7 +13,7 @@ public class FrequencyGeneratorLocalizer
 
     public AbstractFrequencyGenerator localize(String fullFrequencySpec) {
         return frequencyGeneratorList.stream()
-                .filter(f -> f.getPatternWrapper().getLevel1Pattern().matcher(fullFrequencySpec).matches())
+                .filter(f -> f.getLevel1Pattern().matcher(fullFrequencySpec).matches())
                 .findFirst().orElseThrow(
                         () -> new RuntimeException(String.format("Frequency Generator not localized for input spec : (%s)", fullFrequencySpec)));
     }
