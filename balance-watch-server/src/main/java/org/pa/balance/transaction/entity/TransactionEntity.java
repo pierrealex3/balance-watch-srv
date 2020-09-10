@@ -28,6 +28,7 @@ public class TransactionEntity {
     private String noteXtra;
     private String acctId;
     private String acctIdConn;
+    private Long ttIdGen;
 
     @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
     private Reminder reminder;

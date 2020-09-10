@@ -74,7 +74,7 @@ public class TransactionDelegate {
 
         TransactionTemplateEntity tte = transactionTemplateDao.findById(ttId);
         String frequencyDescriptor = tte.getFrequency();
-        List<LocalDateTime> genTransactionDateList = frequencyGeneratorLocalizer.localize(frequencyDescriptor).generate(frequencyDescriptor, yearMonth);
+        List<LocalDateTime> genTransactionDateList = frequencyGeneratorLocalizer.localize(frequencyDescriptor).generate(frequencyDescriptor, yearMonth, tte.getSpanList());
 
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         return genTransactionDateList.stream().map( d -> {
@@ -91,6 +91,8 @@ public class TransactionDelegate {
             te.setWay(tte.getWay());
             te.setNote(tte.getNote());
             te.setAcctId(tte.getAcctId());  // TODO should add the connAccountId as well
+
+            te.setTtIdGen(ttId);    // useful for tracing the origin of a transaction: tt-generated or created manually?
 
             Long tid = transactionDao.addTransaction(te);
             Transaction t = mapper.fromEntityToDto(te);

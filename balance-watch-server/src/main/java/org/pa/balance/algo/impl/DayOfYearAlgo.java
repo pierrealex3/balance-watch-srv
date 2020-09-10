@@ -12,32 +12,38 @@ import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class DayOfMonthAlgo extends AbstractFrequencyGenerator
+public class DayOfYearAlgo extends AbstractFrequencyGenerator
 {
-    Pattern level1Pattern = Pattern.compile("^dayOfMonth.*$");
-    Pattern level2Pattern = Pattern.compile("^dayOfMonth=(\\d+)(;time=\\d+h\\d+m)?$");
+    Pattern level1Pattern = Pattern.compile("^dayOfYear.*$");
+    Pattern level2Pattern = Pattern.compile("^dayOfYear=([1-9]|1[012])-([1-9]|[12][0-9]|3[01])(;time=\\d+h\\d+m)?$");
 
     @Override
     protected List<LocalDateTime> process(@NotNull String algo, @NotNull YearMonth ym, @NotNull List<SpanEntity> spanList)
     {
         Matcher m = level2Pattern.matcher(algo);
+        String monthOfYear = null;
         String dayOfMonth = null;
         TimeMatchRes time = null;
 
         if (m.find()) {
-            dayOfMonth = m.group(1);
-            time = getTime(m.group(2));
+            monthOfYear = m.group(1);
+            dayOfMonth = m.group(2);
+            time = getTime(m.group(3));
         } else {
             throw new InternalException(String.format("Algo: (%s) Pattern: (%s) does not match algo spec: (%s)", getClass().getSimpleName(), level2Pattern, algo));
         }
 
         try
         {
+            if (ym.getMonthValue() != Integer.parseInt(monthOfYear))
+                return Collections.emptyList();
+
             int dayOfMonthI = Integer.parseInt(dayOfMonth);
             LocalDateTime validated = LocalDateTime.of(ym.getYear(), ym.getMonth(), dayOfMonthI, time.getHours(), time.getMinutes());
             return List.of(validated);

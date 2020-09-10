@@ -1,6 +1,7 @@
 package org.pa.balance.transactiont;
 
 import org.mapstruct.factory.Mappers;
+import org.pa.balance.client.model.Span;
 import org.pa.balance.client.model.TT;
 import org.pa.balance.client.model.TTWrapperRes;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
@@ -9,6 +10,7 @@ import org.pa.balance.transactiont.repository.TTRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,16 @@ public class TTDelegate {
      * @return
      */
     public Long addTransactionTemplate(TT body, Long ttGroupId) {
+        List<Span> spanList = body.getSpans();
+        if (spanList == null || spanList.isEmpty()) {   // first idea was to put this default in the swagger, but it does not seem an option.
+            Span s = new Span();
+            s.setStartDate(LocalDate.now());
+            s.setEndDate(LocalDate.MAX);
+            spanList = new ArrayList<>();
+            spanList.add(s);
+            body.setSpans(spanList);
+        }
+
         TTMapper ttMapper = Mappers.getMapper(TTMapper.class);
         TransactionTemplateEntity tte = ttMapper.fromDtoToEntity(body);
         Long id = ttRepo.add(tte, ttGroupId);

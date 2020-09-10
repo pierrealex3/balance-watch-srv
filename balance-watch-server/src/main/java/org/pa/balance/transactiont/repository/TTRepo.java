@@ -2,6 +2,7 @@ package org.pa.balance.transactiont.repository;
 
 import org.mapstruct.factory.Mappers;
 import org.pa.balance.error.EntityNotFoundException;
+import org.pa.balance.transactiont.entity.SpanEntity;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 import org.pa.balance.transactiont.entity.TransactionTemplateGroupEntity;
 import org.pa.balance.transactiont.mapper.TTMapper;
@@ -29,6 +30,9 @@ public class TTRepo {
 
         // TransactionTemplateEntity is on the owning side of the relationship - is there a need to map the other side here?
         tte.setTtGroup(ttge);
+
+        // sync the entity (other side) to cascade the one-to-many persist operation
+        tte.getSpanList().forEach( s -> s.setTransactionTemplate(tte) );
 
         return ttCrudRepo.save(tte).getTt_id();
     }

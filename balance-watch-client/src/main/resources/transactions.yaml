@@ -168,3 +168,7 @@ definitions:
         type: "string"
       accountConnection:
         type: "string"
+      ttIdGen:
+        type: "integer"
+        format: "int64"
+
