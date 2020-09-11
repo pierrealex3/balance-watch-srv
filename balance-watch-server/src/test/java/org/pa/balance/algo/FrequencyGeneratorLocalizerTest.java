@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.pa.balance.algo.impl.DayOfMonthAlgo;
+import org.pa.balance.algo.impl.DayOfWeekAfterDayOfMonthAlgo;
 import org.pa.balance.algo.impl.DayOfYearAlgo;
 import org.pa.balance.algo.impl.WeeklyAlgo;
 import org.pa.balance.transactiont.entity.SpanEntity;
@@ -22,7 +23,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@Import({FrequencyGeneratorLocalizer.class, DayOfMonthAlgo.class, DayOfYearAlgo.class, WeeklyAlgo.class })
+@Import({
+        FrequencyGeneratorLocalizer.class,
+        DayOfMonthAlgo.class,
+        DayOfYearAlgo.class,
+        WeeklyAlgo.class,
+        DayOfWeekAfterDayOfMonthAlgo.class
+})
 class FrequencyGeneratorLocalizerTest
 {
     @Autowired
@@ -142,6 +149,59 @@ class FrequencyGeneratorLocalizerTest
             assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 10, 0, 0)));
             assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 24, 0, 0)));
         });
+    }
+
+    @Test
+    void test_weekly_algo_everyxweeks_dateGen_withTime() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> l = Arrays.asList(se);
+        final String algoSpec = "dayOfWeek=THURSDAY|everyXWeeks=2;time=3h33m";
+        AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
+        assertEquals(WeeklyAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> transactionDateList = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), l);
+            assertEquals(2, transactionDateList.size());
+            assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 10, 3, 33)));
+            assertTrue(transactionDateList.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 24, 3, 33)));
+        });
+    }
+
+    @Test
+    void test_weekly_algo_everyxweeks_monthInSpanBlackout() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.JANUARY, 1));
+        se.setEndDate(LocalDate.of(2020, Month.AUGUST, 31));
+        SpanEntity se2 = new SpanEntity();
+        se2.setStartDate(LocalDate.of(2020, Month.OCTOBER, 1));
+        se2.setEndDate(LocalDate.MAX);
+        List<SpanEntity> l = Arrays.asList(se, se2);
+        final String algoSpec = "dayOfWeek=THURSDAY|everyXWeeks=2";
+        AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
+        assertEquals(WeeklyAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> transactionDateList = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), l);
+            assertEquals(0, transactionDateList.size());
+        });
+    }
+
+    @Test
+    void test_DayOfWeekAfterDayOfMonthAlgo_dateGen() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> spanList = Arrays.asList(se);
+
+        final String algoSpec = "dayOfWeek=MONDAY|after|dayOfMonth=15";
+        AbstractFrequencyGenerator gen = this.localizer.localize(algoSpec);
+        assertEquals(DayOfWeekAfterDayOfMonthAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
+            assertEquals(1, res.size());
+            assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 21, 0, 0)));
+        });
+
     }
 
 }
