@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class DayOfYearAlgo extends AbstractFrequencyGenerator
 {
     Pattern level1Pattern = Pattern.compile("^dayOfYear.*$");
-    Pattern level2Pattern = Pattern.compile("^dayOfYear=([1-9]|1[012])-([1-9]|[12][0-9]|3[01])(;time=\\d+h\\d+m)?$");
+    Pattern level2Pattern = Pattern.compile(String.format("^dayOfYear=([1-9]|1[012])-([1-9]|[12][0-9]|3[01])%s$", OPT_TIME_PTN));
 
     @Override
     protected List<LocalDateTime> process(@NotNull String algo, @NotNull YearMonth ym, @NotNull List<SpanEntity> spanList)

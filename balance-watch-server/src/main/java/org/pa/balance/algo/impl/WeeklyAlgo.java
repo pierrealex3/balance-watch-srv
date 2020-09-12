@@ -18,9 +18,9 @@ public class WeeklyAlgo extends AbstractFrequencyGenerator
 
     Pattern level1Pattern = Pattern.compile("^dayOfWeek=.*\\|everyX?Week.*$");
 
-    Pattern level2aPattern = Pattern.compile("^dayOfWeek=(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\\|everyWeek(;time=\\d+h\\d+m)?$");
+    Pattern level2aPattern = Pattern.compile(String.format("^dayOfWeek=(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\\|everyWeek%s$", OPT_TIME_PTN));
 
-    Pattern level2bPattern = Pattern.compile("^dayOfWeek=(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\\|everyXWeeks=([234])(;time=\\d+h\\d+m)?$");
+    Pattern level2bPattern = Pattern.compile(String.format("^dayOfWeek=(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\\|everyXWeeks=([234])%s$", OPT_TIME_PTN));
 
     @Override
     protected List<LocalDateTime> process(@NotNull String algo, @NotNull YearMonth ym, @NotNull List<SpanEntity> spanList) throws DateGenValidationException

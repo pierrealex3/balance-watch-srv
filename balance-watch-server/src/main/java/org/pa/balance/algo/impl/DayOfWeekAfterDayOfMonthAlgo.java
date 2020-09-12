@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 @Component
 public class DayOfWeekAfterDayOfMonthAlgo extends AbstractFrequencyGenerator
 {
-    Pattern levelAllPattern = Pattern.compile("^dayOfWeek=(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\\|after\\|dayOfMonth=(\\d+)(;time=\\d+h\\d+m)?$");
+    Pattern levelAllPattern = Pattern.compile(String.format("^dayOfWeek=(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\\|after\\|dayOfMonth=(\\d+)%s$", OPT_TIME_PTN));
 
 
     @Override

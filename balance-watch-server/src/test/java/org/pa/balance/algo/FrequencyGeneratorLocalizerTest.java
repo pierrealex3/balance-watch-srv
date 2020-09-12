@@ -3,10 +3,7 @@ package org.pa.balance.algo;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pa.balance.algo.impl.DayOfMonthAlgo;
-import org.pa.balance.algo.impl.DayOfWeekAfterDayOfMonthAlgo;
-import org.pa.balance.algo.impl.DayOfYearAlgo;
-import org.pa.balance.algo.impl.WeeklyAlgo;
+import org.pa.balance.algo.impl.*;
 import org.pa.balance.transactiont.entity.SpanEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -28,7 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
         DayOfMonthAlgo.class,
         DayOfYearAlgo.class,
         WeeklyAlgo.class,
-        DayOfWeekAfterDayOfMonthAlgo.class
+        DayOfWeekAfterDayOfMonthAlgo.class,
+        DayOfMonthWithPossibleReportAlgo.class
 })
 class FrequencyGeneratorLocalizerTest
 {
@@ -202,6 +200,74 @@ class FrequencyGeneratorLocalizerTest
             assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 21, 0, 0)));
         });
 
+    }
+
+    @Test
+    void test_DayOfMonthWithPossibleReportAlgo_dateGenWithReport() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> spanList = Arrays.asList(se);
+
+        final String algoSpec = "dayOfMonth=12|report|from1=SATURDAY;to1=MONDAY;from2=SUNDAY;to2=MONDAY";
+        AbstractFrequencyGenerator gen = this.localizer.localize(algoSpec);
+        assertEquals(DayOfMonthWithPossibleReportAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
+            assertEquals(1, res.size());
+            assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 14, 0, 0)));
+        });
+    }
+
+    @Test
+    void test_DayOfMonthWithPossibleReportAlgo_dateGenNoReport() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> spanList = Arrays.asList(se);
+
+        final String algoSpec = "dayOfMonth=11|report|from1=SATURDAY;to1=MONDAY;from2=SUNDAY;to2=MONDAY";
+        AbstractFrequencyGenerator gen = this.localizer.localize(algoSpec);
+        assertEquals(DayOfMonthWithPossibleReportAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
+            assertEquals(1, res.size());
+            assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 11, 0, 0)));
+        });
+    }
+
+    @Test
+    void test_DayOfMonthWithPossibleReportAlgo_NoReportSpec_dateGenNoReport() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> spanList = Arrays.asList(se);
+
+        final String algoSpec = "dayOfMonth=12|report|";
+        AbstractFrequencyGenerator gen = this.localizer.localize(algoSpec);
+        assertEquals(DayOfMonthWithPossibleReportAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
+            assertEquals(1, res.size());
+            assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 12, 0, 0)));
+        });
+    }
+
+    @Test
+    void test_DayOfMonthWithPossibleReportAlgo_dateGenWithReport_withTime() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> spanList = Arrays.asList(se);
+
+        final String algoSpec = "dayOfMonth=12;time=9h30m|report|from1=SATURDAY;to1=MONDAY;from2=SUNDAY;to2=MONDAY";
+        AbstractFrequencyGenerator gen = this.localizer.localize(algoSpec);
+        assertEquals(DayOfMonthWithPossibleReportAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
+            assertEquals(1, res.size());
+            assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 14, 9, 30)));
+        });
     }
 
 }

@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 @Component
 public class DayOfMonthAlgo extends AbstractFrequencyGenerator
 {
-    Pattern level1Pattern = Pattern.compile("^dayOfMonth.*$");
-    Pattern level2Pattern = Pattern.compile("^dayOfMonth=(\\d+)(;time=\\d+h\\d+m)?$");
+    Pattern level1Pattern = Pattern.compile("^dayOfMonth=\\d+((?!\\|).)*$");
+    Pattern level2Pattern = Pattern.compile(String.format("^dayOfMonth=(\\d+)%s$", OPT_TIME_PTN));
 
     @Override
     protected List<LocalDateTime> process(@NotNull String algo, @NotNull YearMonth ym, @NotNull List<SpanEntity> spanList)

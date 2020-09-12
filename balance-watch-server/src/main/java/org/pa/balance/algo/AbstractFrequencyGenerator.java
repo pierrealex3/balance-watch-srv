@@ -15,6 +15,9 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractFrequencyGenerator
 {
+    protected static final String FULL_DOW_PTN = "(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)";
+    protected static final String OPT_TIME_PTN = "(;time=\\d+h\\d+m)?";
+
     static Pattern timePattern = Pattern.compile(";time=(\\d+)h(\\d+)m");
 
     public List<LocalDateTime> generate(String algo, YearMonth ym, List<SpanEntity> spanList) throws DateGenValidationException {
