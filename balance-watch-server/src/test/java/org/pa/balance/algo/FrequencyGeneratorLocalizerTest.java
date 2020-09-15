@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
         DayOfYearAlgo.class,
         WeeklyAlgo.class,
         DayOfWeekAfterDayOfMonthAlgo.class,
-        DayOfMonthWithPossibleReportAlgo.class
+        DayOfMonthWithPossibleReportAlgo.class,
+        DayOfWeekAtPositionWithinMonthAlgo.class
 })
 class FrequencyGeneratorLocalizerTest
 {
@@ -267,6 +268,57 @@ class FrequencyGeneratorLocalizerTest
             List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
             assertEquals(1, res.size());
             assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 14, 9, 30)));
+        });
+    }
+
+    @Test
+    void test_DayOfWeekAtPositionWithinMonthAlgo_dateGen() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> spanList = Arrays.asList(se);
+
+        final String algoSpec = "dayOfWeek=WEDNESDAY|at|rank=3";
+        AbstractFrequencyGenerator gen = this.localizer.localize(algoSpec);
+        assertEquals(DayOfWeekAtPositionWithinMonthAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
+            assertEquals(1, res.size());
+            assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 16, 0, 0)));
+        });
+    }
+
+    @Test
+    void test_DayOfWeekAtPositionWithinMonthAlgo_dateGen_WithTime() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> spanList = Arrays.asList(se);
+
+        final String algoSpec = "dayOfWeek=MONDAY;time=8h0m|at|rank=2";
+        AbstractFrequencyGenerator gen = this.localizer.localize(algoSpec);
+        assertEquals(DayOfWeekAtPositionWithinMonthAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
+            assertEquals(1, res.size());
+            assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 14, 8, 0)));
+        });
+    }
+
+    @Test
+    void test_DayOfWeekAtPositionWithinMonthAlgo_dateGen_Last_WithTime() {
+        SpanEntity se = new SpanEntity();
+        se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
+        se.setEndDate(LocalDate.MAX);
+        List<SpanEntity> spanList = Arrays.asList(se);
+
+        final String algoSpec = "dayOfWeek=MONDAY;time=15h30m|at|rank=LAST";
+        AbstractFrequencyGenerator gen = this.localizer.localize(algoSpec);
+        assertEquals(DayOfWeekAtPositionWithinMonthAlgo.class, gen.getClass());
+        assertDoesNotThrow(() -> {
+            List<LocalDateTime> res = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), spanList);
+            assertEquals(1, res.size());
+            assertTrue(res.contains(LocalDateTime.of(2020, Month.SEPTEMBER, 28, 15, 30)));
         });
     }
 

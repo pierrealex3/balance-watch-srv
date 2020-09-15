@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class DayOfMonthWithPossibleReportAlgo extends AbstractFrequencyGenerator
 {
 
-    Pattern level1Pattern = Pattern.compile("^dayOfMonth=.*|report|.*$");
+    Pattern level1Pattern = Pattern.compile("^dayOfMonth=.*\\|report\\|.*$");
     Pattern level2Pattern = Pattern.compile(String.format("^dayOfMonth=(\\d+)%s\\|report|(?:from1=%s;to1=%s(?:;from2=%s;to2=%s(?:;from3=%s;to3=%s)?)?)?$",
             OPT_TIME_PTN, FULL_DOW_PTN, FULL_DOW_PTN, FULL_DOW_PTN, FULL_DOW_PTN, FULL_DOW_PTN, FULL_DOW_PTN));
 
