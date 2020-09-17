@@ -43,7 +43,7 @@ public class TTDelegate {
         return id;
     }
 
-    public List<TTWrapperRes> getTransactionTemplates(String account) {
+    public List<TTWrapperRes> getTransactionTemplates(Long account) {
         List<TransactionTemplateEntity> teList = ttRepo.getTransactionTemplates(account);
         return mapEntityListToDtoWrapper(teList);
     }

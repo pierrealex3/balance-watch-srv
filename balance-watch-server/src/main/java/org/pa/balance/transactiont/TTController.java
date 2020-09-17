@@ -28,7 +28,7 @@ public class TTController implements TransactionsTemplatesApi {
     }
 
     @Override
-    public ResponseEntity<List<TTWrapperRes>> transactionsTemplatesGet(@NotNull @Valid String account) {
+    public ResponseEntity<List<TTWrapperRes>> transactionsTemplatesGet(@NotNull @Valid Long account) {
         List<TTWrapperRes> ttwList = ttDelegate.getTransactionTemplates(account);
 
         return new ResponseEntity<>(ttwList, HttpStatus.OK);

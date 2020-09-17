@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TransactionCrudRepo extends CrudRepository<TransactionEntity, Long> {
 
-    public List<TransactionEntity> findByYearAndMonthAndAcctId(Integer year, Integer month, String account);
+    public List<TransactionEntity> findByYearAndMonthAndAcctId(Integer year, Integer month, Long account);
 }

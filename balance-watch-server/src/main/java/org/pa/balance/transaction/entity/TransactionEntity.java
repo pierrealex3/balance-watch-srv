@@ -26,7 +26,7 @@ public class TransactionEntity {
     private TransactionWay way;
     private String note;
     private String noteXtra;
-    private String acctId;
+    private Long acctId;
     private String acctIdConn;
     private Long ttIdGen;
 

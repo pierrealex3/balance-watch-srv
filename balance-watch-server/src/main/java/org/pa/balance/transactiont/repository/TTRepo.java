@@ -38,7 +38,7 @@ public class TTRepo {
     }
 
     @Transactional
-    public List<TransactionTemplateEntity> getTransactionTemplates(String account) {
+    public List<TransactionTemplateEntity> getTransactionTemplates(Long account) {
         List<TransactionTemplateEntity> tteList = StreamSupport.stream(ttCrudRepo.findAllByAcctId(account).spliterator(), false)
                 .collect(Collectors.toList());
 

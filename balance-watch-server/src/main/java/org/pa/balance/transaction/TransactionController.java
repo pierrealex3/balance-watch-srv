@@ -38,7 +38,7 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
     }
 
     @Override
-    public ResponseEntity<List<TransactionWrapper>> transactionsGet(Integer year, Integer month, String account) {
+    public ResponseEntity<List<TransactionWrapper>> transactionsGet(Integer year, Integer month, Long account) {
         List<TransactionWrapper> transactions = transactionDelegate.getTransactions(year, month, account);
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }

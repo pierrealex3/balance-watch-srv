@@ -17,7 +17,7 @@ public class TransactionDao {
     private TransactionCrudRepo crudRepo;
 
     @Transactional
-    public List<TransactionEntity> getTransactions(Integer year, Integer month, String account) {
+    public List<TransactionEntity> getTransactions(Integer year, Integer month, Long account) {
 
         List<TransactionEntity> transactionEntityList = crudRepo.findByYearAndMonthAndAcctId(year, month, account);
 

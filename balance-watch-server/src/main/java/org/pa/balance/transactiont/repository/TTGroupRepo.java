@@ -40,7 +40,7 @@ public class TTGroupRepo
     }
 
     @Transactional
-    public List<TransactionTemplateGroupEntity> findAllByAccountId(String acctId) {
+    public List<TransactionTemplateGroupEntity> findAllByAccountId(Long acctId) {
         List<TransactionTemplateGroupEntity> res = StreamSupport.stream(ttGroupCrudRepo.findAllByAcctId(acctId).spliterator(), false).collect(Collectors.toList());
         if (res.isEmpty())
             throw new EntityNotFoundException(String.format("No Transaction Template Group found for account id: %s", acctId));

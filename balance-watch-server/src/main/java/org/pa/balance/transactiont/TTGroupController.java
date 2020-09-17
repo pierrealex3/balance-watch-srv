@@ -30,7 +30,7 @@ public class TTGroupController implements TransactionTemplateGroupsApi
     TTDelegate ttDelegate;
 
     @Override
-    public ResponseEntity<List<TTGroupWrapper>> transactionTemplateGroupsGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "account", required = true) String account) {
+    public ResponseEntity<List<TTGroupWrapper>> transactionTemplateGroupsGet(@NotNull @ApiParam(value = "", required = true) @Valid @RequestParam(value = "account", required = true) Long account) {
         List<TTGroupWrapper> ttGroupWrapperList = ttGroupDelegate.findAllByAccountId(account);
         return new ResponseEntity<>(ttGroupWrapperList, HttpStatus.OK);
     }

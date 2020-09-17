@@ -34,7 +34,7 @@ public class TransactionDelegate {
     @Autowired
     FrequencyGeneratorLocalizer frequencyGeneratorLocalizer;
 
-    public List<TransactionWrapper> getTransactions(Integer year, Integer month, String account) {
+    public List<TransactionWrapper> getTransactions(Integer year, Integer month, Long account) {
         List<TransactionEntity> transactionEntities = transactionDao.getTransactions(year, month, account);
 
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);

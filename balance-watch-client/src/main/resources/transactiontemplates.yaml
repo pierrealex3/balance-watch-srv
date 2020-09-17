@@ -16,7 +16,8 @@ paths:
         - name: "account"
           in: "query"
           required: true
-          type: "string"
+          type: integer
+          format: int64
       responses:
         200:
           description: "Success"
@@ -62,7 +63,8 @@ paths:
         - name: "account"
           in: "query"
           required: true
-          type: "string"
+          type: integer
+          format: int64
       responses:
         200:
           description: "Success"
@@ -188,7 +190,8 @@ definitions:
       description:
         type: string
       account:
-        type: string
+        type: integer
+        format: int64
   TTWrapperRes:
     type: object
     properties:
@@ -225,7 +228,8 @@ definitions:
       reminderTemplate:
         $ref: "#/definitions/ReminderTemplate"
       account:
-        type: string
+        type: integer
+        format: int64
       accountConnection:
         type: string
       note:

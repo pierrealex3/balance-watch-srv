@@ -18,7 +18,7 @@ public class TransactionTemplateGroupEntity
 
     private String description;
 
-    private String acctId;
+    private Long acctId;
 
     @OneToMany(mappedBy = "ttGroup")
     private List<TransactionTemplateEntity> transactionTemplateEntityList;

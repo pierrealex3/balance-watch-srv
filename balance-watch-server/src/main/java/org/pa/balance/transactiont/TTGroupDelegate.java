@@ -34,7 +34,7 @@ public class TTGroupDelegate
         return ttGroupRepo.update(id, ttge);
     }
 
-    public List<TTGroupWrapper> findAllByAccountId(String acctId) {
+    public List<TTGroupWrapper> findAllByAccountId(Long acctId) {
         TTGroupMapper mapper = Mappers.getMapper(TTGroupMapper.class);
         List<TTGroupWrapper> res = new ArrayList<>();
 

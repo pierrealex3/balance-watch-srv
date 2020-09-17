@@ -47,7 +47,7 @@ public class TransactionTemplateEntity {
     @OneToOne(mappedBy = "transactionTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
     private ReminderTemplateEntity reminderTemplate;
 
-    private String acctId;
+    private Long acctId;
 
     @ManyToOne
     @JoinColumn(name = "tt_group_id", nullable = true)
