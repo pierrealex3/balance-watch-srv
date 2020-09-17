@@ -42,4 +42,21 @@ public class AccountDelegate
             return aw;
         }).collect(Collectors.toList());
     }
+
+    public AccountWrapper getAccount(Long accountId)
+    {
+        AccountMapper m = Mappers.getMapper(AccountMapper.class);
+        AccountEntity ae = accountDao.getAccount(accountId);
+        AccountWrapper aw = new AccountWrapper();
+        aw.setId(ae.getId());
+        aw.setData(m.fromEntityToDto(ae));
+        return aw;
+    }
+
+    public void updateAccount(Long accountId, Account body)
+    {
+        AccountMapper m = Mappers.getMapper(AccountMapper.class);
+        AccountEntity detached = m.fromDtoToEntity(body);
+        accountDao.updateAccount(accountId, detached);
+    }
 }

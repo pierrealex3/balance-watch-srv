@@ -78,6 +78,24 @@ paths:
       responses:
         405:
           description: "Invalid input"
+    get:
+      tags:
+        - "accounts"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "accountId"
+          in: "path"
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/AccountWrapper"
+        404:
+          description: "No accounts found for specified id"
   /users/{userId}:
     get:
       tags:

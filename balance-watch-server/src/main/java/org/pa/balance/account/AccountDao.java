@@ -1,5 +1,6 @@
 package org.pa.balance.account;
 
+import org.mapstruct.factory.Mappers;
 import org.pa.balance.account.repository.AccountCrudRepo;
 import org.pa.balance.error.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,5 +41,19 @@ public class AccountDao
             throw new EntityNotFoundException(String.format("Cannot find any accounts associated with userId : %d", userId));
         }
         return StreamSupport.stream(crudRepo.findAllById(accountIdList).spliterator(), false).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public AccountEntity getAccount(Long accountId)
+    {
+        return crudRepo.findById(accountId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any account with id: %d", accountId)));
+    }
+
+    @Transactional
+    public void updateAccount(Long accountId, AccountEntity detached)
+    {
+        AccountEntity managed = getAccount(accountId);
+        AccountMapper m = Mappers.getMapper(AccountMapper.class);
+        m.fromDetachedToManaged(detached, managed);
     }
 }
