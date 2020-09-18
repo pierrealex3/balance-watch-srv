@@ -17,7 +17,7 @@ public class TransactionBoardDelegate {
     @Autowired
     TransactionBoardDao transactionBoardDao;
 
-    public Board getTransactionBoard(Integer year, Integer month, String account) {
+    public Board getTransactionBoard(Integer year, Integer month, Long account) {
         TransactionBoardEntity tbe = transactionBoardDao.getTransactionBoard(year, month, account);
 
         TransactionBoardMapper mapper = Mappers.getMapper(TransactionBoardMapper.class);
@@ -26,21 +26,18 @@ public class TransactionBoardDelegate {
         return b;
     }
 
-    public Long addTransactionBoard(@TransactionBoardDateLimit(message="Allow creation of young transaction boards only") Board b) {
+    public void addTransactionBoard(@TransactionBoardDateLimit(message="Allow creation of young transaction boards only") Board b) {
         TransactionBoardMapper mapper = Mappers.getMapper(TransactionBoardMapper.class);
         TransactionBoardEntity tbe = mapper.fromDtoToEntity(b);
 
         TransactionBoardEntity tbex = transactionBoardDao.addTransactionBoard(tbe);
-
-        return tbex.getId();
     }
 
-    public Long updateTransactionBoard(Board b) {
+    public void updateTransactionBoard(Board b) {
         TransactionBoardMapper mapper = Mappers.getMapper(TransactionBoardMapper.class);
         TransactionBoardEntity tbe = mapper.fromDtoToEntity(b);
 
-        TransactionBoardEntity tbex = transactionBoardDao.updateTransactionBoard(tbe);
-        return tbex.getId();
+        transactionBoardDao.updateTransactionBoard(tbe);
     }
 
 

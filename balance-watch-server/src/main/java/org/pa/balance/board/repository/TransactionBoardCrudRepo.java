@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface TransactionBoardCrudRepo extends CrudRepository<TransactionBoardEntity, Long> {
 
-    public TransactionBoardEntity findByYearAndMonthAndAcctId(Integer year, Integer month, String acctId);
+    public TransactionBoardEntity findByIdYearAndIdMonthAndIdAcctId(Integer year, Integer month, Long acctId);
 }

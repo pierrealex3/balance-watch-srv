@@ -2,20 +2,19 @@ package org.pa.balance.board.entity;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import java.math.BigDecimal;
 
 @Entity(name="TransactionBoard")
 @Data
 public class TransactionBoardEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    TransactionBoardEntityId id;
 
-    private Integer year;
-    private Integer month;
     @Column(name="StartAmount")
     private BigDecimal startAmt;
-    private String acctId;
+
 }

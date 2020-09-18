@@ -5,8 +5,6 @@ import org.pa.balance.client.model.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,34 +14,21 @@ public class TransactionBoardController implements TransactionBoardsApi {
     TransactionBoardDelegate transactionBoardDelegate;
 
     @Override
-    public ResponseEntity<Board> transactionBoardsYearMonthAccountGet(Integer year, Integer month, String account) {
-
+    public ResponseEntity<Board> transactionBoardsYearMonthAccountGet(Integer year, Integer month, Long account) {
         Board tb = transactionBoardDelegate.getTransactionBoard(year, month, account);
-
-        if (tb == null)
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
         return new ResponseEntity<>( tb, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> transactionBoardsPost(Board body) {
-        Long id = transactionBoardDelegate.addTransactionBoard(body);
-
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("X-Internal-Id", String.valueOf(id));
-
-        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
+        transactionBoardDelegate.addTransactionBoard(body);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<Void> transactionBoardsPut(Board body) {
-        Long id = transactionBoardDelegate.updateTransactionBoard(body);
-
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("X-Internal-Id", String.valueOf(id));
-
-        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
+        transactionBoardDelegate.updateTransactionBoard(body);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
