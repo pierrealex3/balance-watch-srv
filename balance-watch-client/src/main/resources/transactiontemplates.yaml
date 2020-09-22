@@ -231,7 +231,8 @@ definitions:
         type: integer
         format: int64
       accountConnection:
-        type: string
+        type: integer
+        format: int64
       note:
         type: string
   Span:

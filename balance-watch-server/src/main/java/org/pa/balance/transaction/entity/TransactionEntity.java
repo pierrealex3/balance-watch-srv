@@ -27,7 +27,7 @@ public class TransactionEntity {
     private String note;
     private String noteXtra;
     private Long acctId;
-    private String acctIdConn;
+    private Long acctIdConn;
     private Long ttIdGen;
 
     @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)

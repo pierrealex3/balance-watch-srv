@@ -48,6 +48,7 @@ public class TransactionTemplateEntity {
     private ReminderTemplateEntity reminderTemplate;
 
     private Long acctId;
+    private Long acctIdConn;
 
     @ManyToOne
     @JoinColumn(name = "tt_group_id", nullable = true)
