@@ -12,9 +12,9 @@ import javax.persistence.*;
 public class AccountEntity
 {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
     private String accountNumber;
-    private String desc;
+    private String description; // it appears 'desc' is a reserved word for MySql and won't pass.  It does pass with H2.
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class TTDelegate {
         if (spanList == null || spanList.isEmpty()) {   // first idea was to put this default in the swagger, but it does not seem an option.
             Span s = new Span();
             s.setStartDate(LocalDate.now());
-            s.setEndDate(LocalDate.MAX);
+            s.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
             spanList = new ArrayList<>();
             spanList.add(s);
             body.setSpans(spanList);

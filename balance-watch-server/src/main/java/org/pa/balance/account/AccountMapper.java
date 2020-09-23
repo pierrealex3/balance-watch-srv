@@ -8,8 +8,10 @@ import org.pa.balance.client.model.Account;
 @Mapper
 public interface AccountMapper
 {
+    @Mapping(target="description", source="desc")
     AccountEntity fromDtoToEntity(Account dto);
 
+    @Mapping(target="desc", source="description")
     Account fromEntityToDto(AccountEntity entity);
 
     @Mapping(target="id", ignore=true)

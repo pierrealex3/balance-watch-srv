@@ -41,7 +41,7 @@ class FrequencyGeneratorLocalizerTest
 
         SpanEntity s = new SpanEntity();
         s.setStartDate(LocalDate.of(2020, Month.JANUARY, 1));
-        s.setEndDate(LocalDate.MAX);
+        s.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         SPAN_LIST_ACTIVE_ALL_2020.add(s);
     }
 
@@ -119,7 +119,7 @@ class FrequencyGeneratorLocalizerTest
     void test_weekly_algo_everyweek_dateGen() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.SEPTEMBER, 9));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> l = Arrays.asList(se);
         final String algoSpec = "dayOfWeek=TUESDAY|everyWeek";
         AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
@@ -137,7 +137,7 @@ class FrequencyGeneratorLocalizerTest
     void test_weekly_algo_everyxweeks_dateGen() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> l = Arrays.asList(se);
         final String algoSpec = "dayOfWeek=THURSDAY|everyXWeeks=2";
         AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
@@ -154,7 +154,7 @@ class FrequencyGeneratorLocalizerTest
     void test_weekly_algo_everyxweeks_dateGen_withTime() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> l = Arrays.asList(se);
         final String algoSpec = "dayOfWeek=THURSDAY|everyXWeeks=2;time=3h33m";
         AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
@@ -174,7 +174,7 @@ class FrequencyGeneratorLocalizerTest
         se.setEndDate(LocalDate.of(2020, Month.AUGUST, 31));
         SpanEntity se2 = new SpanEntity();
         se2.setStartDate(LocalDate.of(2020, Month.OCTOBER, 1));
-        se2.setEndDate(LocalDate.MAX);
+        se2.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> l = Arrays.asList(se, se2);
         final String algoSpec = "dayOfWeek=THURSDAY|everyXWeeks=2";
         AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
@@ -189,7 +189,7 @@ class FrequencyGeneratorLocalizerTest
     void test_DayOfWeekAfterDayOfMonthAlgo_dateGen() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> spanList = Arrays.asList(se);
 
         final String algoSpec = "dayOfWeek=MONDAY|after|dayOfMonth=15";
@@ -207,7 +207,7 @@ class FrequencyGeneratorLocalizerTest
     void test_DayOfMonthWithPossibleReportAlgo_dateGenWithReport() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> spanList = Arrays.asList(se);
 
         final String algoSpec = "dayOfMonth=12|report|from1=SATURDAY;to1=MONDAY;from2=SUNDAY;to2=MONDAY";
@@ -224,7 +224,7 @@ class FrequencyGeneratorLocalizerTest
     void test_DayOfMonthWithPossibleReportAlgo_dateGenNoReport() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> spanList = Arrays.asList(se);
 
         final String algoSpec = "dayOfMonth=11|report|from1=SATURDAY;to1=MONDAY;from2=SUNDAY;to2=MONDAY";
@@ -241,7 +241,7 @@ class FrequencyGeneratorLocalizerTest
     void test_DayOfMonthWithPossibleReportAlgo_NoReportSpec_dateGenNoReport() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> spanList = Arrays.asList(se);
 
         final String algoSpec = "dayOfMonth=12|report|";
@@ -258,7 +258,7 @@ class FrequencyGeneratorLocalizerTest
     void test_DayOfMonthWithPossibleReportAlgo_dateGenWithReport_withTime() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> spanList = Arrays.asList(se);
 
         final String algoSpec = "dayOfMonth=12;time=9h30m|report|from1=SATURDAY;to1=MONDAY;from2=SUNDAY;to2=MONDAY";
@@ -275,7 +275,7 @@ class FrequencyGeneratorLocalizerTest
     void test_DayOfWeekAtPositionWithinMonthAlgo_dateGen() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> spanList = Arrays.asList(se);
 
         final String algoSpec = "dayOfWeek=WEDNESDAY|at|rank=3";
@@ -292,7 +292,7 @@ class FrequencyGeneratorLocalizerTest
     void test_DayOfWeekAtPositionWithinMonthAlgo_dateGen_WithTime() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> spanList = Arrays.asList(se);
 
         final String algoSpec = "dayOfWeek=MONDAY;time=8h0m|at|rank=2";
@@ -309,7 +309,7 @@ class FrequencyGeneratorLocalizerTest
     void test_DayOfWeekAtPositionWithinMonthAlgo_dateGen_Last_WithTime() {
         SpanEntity se = new SpanEntity();
         se.setStartDate(LocalDate.of(2020, Month.AUGUST, 27));
-        se.setEndDate(LocalDate.MAX);
+        se.setEndDate(LocalDate.of(9999, Month.DECEMBER, 31));
         List<SpanEntity> spanList = Arrays.asList(se);
 
         final String algoSpec = "dayOfWeek=MONDAY;time=15h30m|at|rank=LAST";
