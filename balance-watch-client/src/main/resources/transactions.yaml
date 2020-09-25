@@ -7,6 +7,22 @@ basePath: "/watch"
 
 paths:
   /transactions/{id}:
+    delete:
+      tags:
+        - "transactions"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: "Success"
+        404:
+          description: "Cannot find transaction"
     put:
       tags:
         - "transactions"
@@ -174,4 +190,3 @@ definitions:
       ttIdGen:
         type: "integer"
         format: "int64"
-

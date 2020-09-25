@@ -44,6 +44,13 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
     }
 
     @Override
+    public ResponseEntity<Void> transactionsIdDelete(Long id)
+    {
+        transactionDelegate.deleteTransaction(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<Void> transactionsPost(Transaction body) {
         Long id = transactionDelegate.addTransaction(body);
 

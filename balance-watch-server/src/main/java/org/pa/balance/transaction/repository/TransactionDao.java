@@ -50,4 +50,10 @@ public class TransactionDao {
     {
         return crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)));
     }
+
+    @Transactional
+    public void deleteTransaction(Long id)
+    {
+        crudRepo.deleteById(id);
+    }
 }

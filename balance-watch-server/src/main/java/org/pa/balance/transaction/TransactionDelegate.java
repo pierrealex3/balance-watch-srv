@@ -111,4 +111,9 @@ public class TransactionDelegate {
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         return mapper.fromEntityToDto(te);
     }
+
+    public void deleteTransaction(Long id)
+    {
+        transactionDao.deleteTransaction(id);
+    }
 }
