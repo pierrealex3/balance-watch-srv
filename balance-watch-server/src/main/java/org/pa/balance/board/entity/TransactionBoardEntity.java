@@ -17,4 +17,7 @@ public class TransactionBoardEntity {
     @Column(name="StartAmount")
     private BigDecimal startAmt;
 
+    @Column(name="StartAmountMan")
+    private Boolean startAmtMan;
+
 }
