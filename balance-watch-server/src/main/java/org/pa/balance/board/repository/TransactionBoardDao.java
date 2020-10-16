@@ -31,6 +31,7 @@ public class TransactionBoardDao {
     public void updateTransactionBoard(TransactionBoardEntity board) {
         TransactionBoardEntity tbe = getTransactionBoard(board.getId().getYear(), board.getId().getMonth(), board.getId().getAcctId());
         tbe.setStartAmt(board.getStartAmt());
+        tbe.setStartAmtMan(board.getStartAmtMan());
     }
 
     @Transactional
