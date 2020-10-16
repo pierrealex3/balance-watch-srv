@@ -23,6 +23,6 @@ public class Application
 	@Bean
 	public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> webServerFactoryCustomizer()
 	{
-		return factory -> factory.setContextPath("/app");
+		return factory -> factory.setContextPath("/mds");
 	}
 }
