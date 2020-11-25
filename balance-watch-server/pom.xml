@@ -95,6 +95,23 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!-- latest version (2.20.1) does not work well with JUnit5 -->
+                <version>2.19.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>1.0.3</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>5.5.2</version>    <!-- same version as the dependency pulled by spring-boot-dependencies -->
+                    </dependency>
+                </dependencies>
+            </plugin>
             <!-- PA: plugin that will supposedly (according to the official Hibernate 5.4.14 official doc) allow for perf improvements + remove the need for child-side entity sync when adding/removing an entity on the parent side of a one-to-many asso -->
 <!--            <plugin>-->
 <!--                <groupId>org.hibernate.orm.tooling</groupId>-->
