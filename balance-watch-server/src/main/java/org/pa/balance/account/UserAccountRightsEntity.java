@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="UserAccountRights")
 @Data
-@EqualsAndHashCode(exclude = {})
+@EqualsAndHashCode()
 public class UserAccountRightsEntity
 {
     @EmbeddedId

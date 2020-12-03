@@ -5,7 +5,6 @@ import org.pa.balance.client.api.UsersApi;
 import org.pa.balance.client.model.Account;
 import org.pa.balance.client.model.AccountWrapper;
 import org.pa.balance.client.model.User;
-import org.pa.balance.client.model.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,29 +27,22 @@ public class UserController implements UsersApi
     @Override
     public ResponseEntity<Void> usersPost(@Valid User body)
     {
-        Long id = userDelegate.addUser(body);
+        String id = userDelegate.addUser(body);
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("X-Internal-Id", String.valueOf(id));
+        headers.add("X-Internal-Id", id);
 
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<UserWrapper> usersUserIdGet(Long userId)
+    public ResponseEntity<User> usersUserIdGet(String userId)
     {
-        UserWrapper u = userDelegate.getUser(userId);
+        User u = userDelegate.getUser(userId);
         return new ResponseEntity<>(u, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Void> usersUserIdPut(Long userId, @Valid User body)
-    {
-        userDelegate.updateUser(userId, body);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @Override
-    public ResponseEntity<Void> usersUserIdAccountsPost(Long userId, @Valid Account body)
+    public ResponseEntity<Void> usersUserIdAccountsPost(String userId, @Valid Account body)
     {
         Long id = accountDelegate.addAccount(userId, body);
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -65,7 +57,7 @@ public class UserController implements UsersApi
      * @return
      */
     @Override
-    public ResponseEntity<List<AccountWrapper>> usersUserIdAccountsGet(Long userId)
+    public ResponseEntity<List<AccountWrapper>> usersUserIdAccountsGet(String userId)
     {
         List<AccountWrapper> accountWrapperList = accountDelegate.getAccounts(userId);
         return new ResponseEntity<>(accountWrapperList, HttpStatus.OK);

@@ -13,18 +13,18 @@ public class UserDao
     UserCrudRepo crudRepo;
 
     @Transactional
-    public Long addUser(UserEntity ue) {
+    public String addUser(UserEntity ue) {
         return crudRepo.save(ue).getId();
     }
 
     @Transactional
-    public UserEntity getUser(Long userId)
+    public UserEntity getUser(String userId)
     {
-        return crudRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any user with id: %d", userId)));
+        return crudRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any user with id: %s", userId)));
     }
 
     @Transactional
-    public void updateUser(Long userId, UserEntity detached)
+    public void updateUser(String userId, UserEntity detached)
     {
         UserMapper m = Mappers.getMapper(UserMapper.class);
         m.fromDetachedToManaged(detached, getUser(userId));

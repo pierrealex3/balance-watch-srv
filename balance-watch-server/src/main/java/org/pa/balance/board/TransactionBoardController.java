@@ -5,6 +5,9 @@ import org.pa.balance.client.model.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,6 +18,7 @@ public class TransactionBoardController implements TransactionBoardsApi {
 
     @Override
     public ResponseEntity<Board> transactionBoardsYearMonthAccountGet(Integer year, Integer month, Long account) {
+        Authentication a = SecurityContextHolder.getContext().getAuthentication();
         Board tb = transactionBoardDelegate.getTransactionBoard(year, month, account);
         return new ResponseEntity<>( tb, HttpStatus.OK);
     }

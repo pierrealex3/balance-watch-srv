@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.stream.Stream;
 
-public interface UserAccountRightsRepo extends JpaRepository<UserAccountRightsEntity, Long>
+public interface UserAccountRightsRepo extends JpaRepository<UserAccountRightsEntity, UserAccountRightsEntityId>
 {
-    Stream<UserAccountRightsEntity> findByIdUserId(Long userId);
+    Stream<UserAccountRightsEntity> findByIdUserId(String userId);
 }

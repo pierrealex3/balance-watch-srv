@@ -5,6 +5,7 @@ import org.pa.balance.account.*;
 import org.pa.balance.client.model.Account;
 import org.pa.balance.client.model.AccountWrapper;
 import org.pa.balance.user.UserDao;
+import org.pa.balance.user.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +22,16 @@ public class AccountDelegate
     @Autowired
     private UserDao userDao;
 
-    public Long addAccount(Long userId, Account body)
+    public Long addAccount(String userId, Account body)
     {
-        userDao.getUser(userId);    // will throw if not found
+        UserEntity ue = userDao.getUser(userId);    // will throw if not found
         AccountMapper m = Mappers.getMapper(AccountMapper.class);
         AccountEntity ae = m.fromDtoToEntity(body);
 
-        return accountDao.addAccount(ae, userId);
+        return accountDao.addAccount(ae, ue);
     }
 
-    public List<AccountWrapper> getAccounts(Long userId)
+    public List<AccountWrapper> getAccounts(String userId)
     {
         userDao.getUser(userId);    // will throw if not found
         AccountMapper mapper = Mappers.getMapper(AccountMapper.class);
