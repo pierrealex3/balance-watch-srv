@@ -25,7 +25,7 @@ import java.util.*;
 public class TransactionTemplateEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long tt_id;
 
     @Column(nullable = false)

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class TransactionEntity {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Long id;
     private Integer year;
     private Integer month;

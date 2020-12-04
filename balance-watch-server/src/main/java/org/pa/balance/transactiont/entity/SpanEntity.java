@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class SpanEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(nullable = false)
     private java.time.LocalDate startDate;
