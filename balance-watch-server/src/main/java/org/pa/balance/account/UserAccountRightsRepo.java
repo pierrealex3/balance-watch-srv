@@ -7,4 +7,6 @@ import java.util.stream.Stream;
 public interface UserAccountRightsRepo extends JpaRepository<UserAccountRightsEntity, UserAccountRightsEntityId>
 {
     Stream<UserAccountRightsEntity> findByIdUserId(String userId);
+
+    Stream<UserAccountRightsEntity> findAllByIdUserIdIn(Iterable<String> userIds);
 }

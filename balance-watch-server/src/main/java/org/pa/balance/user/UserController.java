@@ -10,11 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class UserController implements UsersApi
 {
@@ -60,6 +61,16 @@ public class UserController implements UsersApi
     public ResponseEntity<List<AccountWrapper>> usersUserIdAccountsGet(String userId)
     {
         List<AccountWrapper> accountWrapperList = accountDelegate.getAccounts(userId);
+        return new ResponseEntity<>(accountWrapperList, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/users/{userId}/relatedAccounts",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    public ResponseEntity<List<AccountWrapper>> usersUserIdAccountsGetRelated(@PathVariable("userId") String userId)
+    {
+        List<AccountWrapper> accountWrapperList = accountDelegate.getRelatedAccounts(userId);
         return new ResponseEntity<>(accountWrapperList, HttpStatus.OK);
     }
 }

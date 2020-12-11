@@ -6,10 +6,13 @@ import org.pa.balance.client.model.Account;
 import org.pa.balance.client.model.AccountWrapper;
 import org.pa.balance.user.UserDao;
 import org.pa.balance.user.UserEntity;
+import org.pa.balance.user.info.UserInfoProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +24,9 @@ public class AccountDelegate
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private UserInfoProxy userInfoProxy;
 
     public Long addAccount(String userId, Account body)
     {
@@ -42,6 +48,31 @@ public class AccountDelegate
             aw.setData( mapper.fromEntityToDto(ae));
             return aw;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * TODO add required role security to access this method
+     * @param userId
+     * @return
+     */
+    public List<AccountWrapper> getRelatedAccounts(String userId)
+    {
+        userDao.getUser(userId);    // will throw if not found
+        AccountMapper mapper = Mappers.getMapper(AccountMapper.class);
+
+        Optional<String> targetGroup = userInfoProxy.getAuthenticatedUserTargetGroup();
+        List<String> userIds = Arrays.asList(userId);
+        if (targetGroup.isPresent()) {
+            userIds = userInfoProxy.getUsersForGroup(targetGroup.get());
+        }
+
+        return accountDao.getAllAccessibleAccounts(userIds).stream().map( ae -> {
+            var aw = new AccountWrapper();
+            aw.setId(ae.getId());
+            aw.setData( mapper.fromEntityToDto(ae));
+            return aw;
+        }).collect(Collectors.toList());
+
     }
 
     public AccountWrapper getAccount(Long accountId)

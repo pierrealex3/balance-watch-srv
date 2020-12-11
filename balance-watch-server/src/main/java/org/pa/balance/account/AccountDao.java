@@ -45,6 +45,15 @@ public class AccountDao
     }
 
     @Transactional
+    public List<AccountEntity> getAllAccessibleAccounts(List<String> userIds) {
+        List<AccountEntity> accountList = userAccountRightsRepo.findAllByIdUserIdIn(userIds).map( uare -> uare.getId().getAccount() ).collect(Collectors.toList());
+        if (accountList.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Cannot find any accounts associated with userIds : %s", "CHANGETHAT"));
+        }
+        return accountList;
+    }
+
+    @Transactional
     public AccountEntity getAccount(Long accountId)
     {
         return crudRepo.findById(accountId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any account with id: %d", accountId)));
