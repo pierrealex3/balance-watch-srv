@@ -25,4 +25,9 @@ public class UserInfoProxy
     public List<String> getUsersForGroup(String internalGroupId) {
         return userInfoDelegate.getUsersForGroup(internalGroupId);
     }
+
+    public String getAuthenticatedUser() {
+        Authentication a = SecurityContextHolder.getContext().getAuthentication();
+        return ((KeycloakPrincipal)((KeycloakAuthenticationToken)a).getPrincipal()).getName();
+    }
 }

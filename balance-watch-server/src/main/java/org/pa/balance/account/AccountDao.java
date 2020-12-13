@@ -21,7 +21,7 @@ public class AccountDao
     UserAccountRightsRepo userAccountRightsRepo;
 
     @Transactional
-    public Long addAccount(AccountEntity ae, UserEntity ue)
+    public Long addAccount(AccountEntity ae, UserEntity ue, UserAccountRightsPattern rightsPattern)
     {
         AccountEntity aee = crudRepo.save(ae);
 
@@ -29,7 +29,7 @@ public class AccountDao
         uare.setId(new UserAccountRightsEntityId());
         uare.getId().setAccount(ae);
         uare.getId().setUser(ue);
-        uare.setRightPattern(1);    // TODO - this is write permission - needs to be changed to a bitmask
+        uare.setRightPattern(rightsPattern.getRightsPattern());
         userAccountRightsRepo.save(uare);
 
         return aee.getId();

@@ -34,7 +34,13 @@ public class AccountDelegate
         AccountMapper m = Mappers.getMapper(AccountMapper.class);
         AccountEntity ae = m.fromDtoToEntity(body);
 
-        return accountDao.addAccount(ae, ue);
+        final String authenticatedUser = userInfoProxy.getAuthenticatedUser();
+        if (!userId.equals(authenticatedUser))
+            throw new AddAccountForbiddenException(String.format("The user creating the account for : %s must be : %s", userId, authenticatedUser));
+
+        UserAccountRightsPattern rightsPattern = new UserAccountRightsPattern.UserAccountRightsPatternBuilder().addVip().build();
+
+        return accountDao.addAccount(ae, ue, rightsPattern);
     }
 
     public List<AccountWrapper> getAccounts(String userId)
