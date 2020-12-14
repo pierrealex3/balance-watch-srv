@@ -1,22 +1,32 @@
 package org.pa.balance.transaction;
 
 import org.mapstruct.factory.Mappers;
+import org.pa.balance.account.AccountDao;
+import org.pa.balance.account.UserAccountRightsPattern;
 import org.pa.balance.algo.FrequencyGeneratorLocalizer;
 import org.pa.balance.client.model.Transaction;
 import org.pa.balance.client.model.TransactionWrapper;
+import org.pa.balance.error.InternalException;
 import org.pa.balance.transaction.entity.TransactionEntity;
+import org.pa.balance.transaction.entity.TransactionWay;
 import org.pa.balance.transaction.mapper.TransactionMapper;
 import org.pa.balance.transaction.repository.TransactionDao;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 import org.pa.balance.transactiont.repository.TTRepo;
+import org.pa.balance.user.info.UserInfoProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +43,12 @@ public class TransactionDelegate {
 
     @Autowired
     FrequencyGeneratorLocalizer frequencyGeneratorLocalizer;
+
+    @Autowired
+    AccountDao accountDao;
+
+    @Autowired
+    UserInfoProxy userInfoProxy;
 
     public List<TransactionWrapper> getTransactions(Integer year, Integer month, Long account) {
         List<TransactionEntity> transactionEntities = transactionDao.getTransactions(year, month, account);
@@ -51,9 +67,85 @@ public class TransactionDelegate {
     }
 
     public Long addTransaction(Transaction t) {
+        return addTransaction(t, true);
+    }
+
+    /**
+     * Add a transaction to the account specified within the transaction itself.
+     * The authenticated user rights towards that account are validated first, and the transaction is created if everything is OK.
+     * @param t
+     * @param manual switch to reuse this method for manual vs generated transaction flags set
+     * @return
+     */
+    public Long addTransaction(Transaction t, boolean manual) {
+
+        if (t.getAccount().equals(t.getAccountConnection()))
+            throw new AddTransactionAccountConnectionException();
+
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         TransactionEntity te = mapper.fromDtoToEntity(t);
-        return transactionDao.addTransaction(te);
+
+        Integer userAccountRights = accountDao.getUserAccountRights(userInfoProxy.getAuthenticatedUser(), t.getAccount());
+        if (userAccountRights == null)
+            throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no rights on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
+
+        UserAccountRightsPattern rightsPattern = UserAccountRightsPattern.from(userAccountRights);
+        if (!rightsPattern.isAdmin())
+            throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no admin right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
+
+        TransactionFlags.TransactionFlagsBuilder tfb = new TransactionFlags.TransactionFlagsBuilder();
+        TransactionFlags tf = manual ? tfb.addManual().build() : tfb.addGenerated().build();
+        te.setActionFlags(tf.getFlags());
+
+        TransactionEntity teConn = null;
+        if (te.getAcctIdConn() != null) {
+            teConn = addConnectedTransaction(te, manual);
+        }
+
+        return transactionDao.addTransaction(te, teConn);
+    }
+
+    /**
+     * Adds a connected transaction in relation with the specified transaction.
+     * @param te
+     * @param manual switch to reuse this method for manual vs generated transaction flags set
+     * @return
+     */
+    TransactionEntity addConnectedTransaction(TransactionEntity te, boolean manual) {
+
+        Integer userAccountRights = accountDao.getUserAccountRights(userInfoProxy.getAuthenticatedUser(), te.getAcctIdConn());
+        UserAccountRightsPattern rightsPattern = Optional.ofNullable(userAccountRights).map( UserAccountRightsPattern::from ).orElseThrow( () -> new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no rights on connected account : %d", userInfoProxy.getAuthenticatedUser(), te.getAcctIdConn())));
+
+        if (!rightsPattern.isTransfer())
+            throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no transfer right on connected account : %d", userInfoProxy.getAuthenticatedUser(), te.getAcctIdConn()));
+
+        TransactionFlags.TransactionFlagsBuilder tb = new TransactionFlags.TransactionFlagsBuilder();
+        tb  = manual ? tb.addManual() : tb.addGenerated();
+
+        if (!rightsPattern.isAdmin()) {
+            tb.addSubmitted();  // this will result in the transaction to be accepted by someone with admin rights on the connected account side.
+        }
+        TransactionFlags tf = tb.build();
+
+        TransactionEntity teConn = null;
+        try
+        {
+            var baos = new ByteArrayOutputStream();
+            var oos = new ObjectOutputStream(baos);
+            oos.writeObject(te);
+
+            var bais = new ByteArrayInputStream(baos.toByteArray());
+            var ois = new ObjectInputStream(bais);
+            teConn = (TransactionEntity) ois.readObject();
+        } catch (Exception e) {
+            throw new InternalException("Problem while deep cloning the TransactionEntity for the connected-account side");
+        }
+
+        teConn.setAcctId(te.getAcctIdConn());
+        teConn.setAcctIdConn(te.getAcctId());
+        teConn.setActionFlags(tf.getFlags());
+        teConn.setWay( te.getWay() == TransactionWay.DEBIT ? TransactionWay.CREDIT : TransactionWay.DEBIT ) ;
+        return teConn;
     }
 
     public Long updateTransaction(Transaction t, Long id) {

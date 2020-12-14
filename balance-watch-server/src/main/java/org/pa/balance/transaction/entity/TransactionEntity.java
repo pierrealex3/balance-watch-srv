@@ -4,13 +4,15 @@ import lombok.Data;
 import org.pa.balance.model.Reminder;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Transactions")
 @Data
-public class TransactionEntity {
+public class TransactionEntity implements Serializable
+{
 
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE)
@@ -36,6 +38,6 @@ public class TransactionEntity {
     private LocalDateTime dateModified;
 
     @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
-    private Reminder reminder;
+    private transient Reminder reminder;
 
 }

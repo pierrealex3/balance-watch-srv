@@ -8,5 +8,7 @@ public interface UserAccountRightsRepo extends JpaRepository<UserAccountRightsEn
 {
     Stream<UserAccountRightsEntity> findByIdUserId(String userId);
 
+    UserAccountRightsEntity findByIdUserIdAndIdAccountId(String userId, Long accountId);
+
     Stream<UserAccountRightsEntity> findAllByIdUserIdIn(Iterable<String> userIds);
 }

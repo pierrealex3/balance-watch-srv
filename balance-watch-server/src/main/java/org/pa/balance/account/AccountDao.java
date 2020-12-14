@@ -54,6 +54,12 @@ public class AccountDao
     }
 
     @Transactional
+    public Integer getUserAccountRights(String userId, Long accountId) {
+        UserAccountRightsEntity uare = userAccountRightsRepo.findByIdUserIdAndIdAccountId(userId, accountId);
+        return uare == null ? null : uare.getRightPattern();
+    }
+
+    @Transactional
     public AccountEntity getAccount(Long accountId)
     {
         return crudRepo.findById(accountId).orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find any account with id: %d", accountId)));

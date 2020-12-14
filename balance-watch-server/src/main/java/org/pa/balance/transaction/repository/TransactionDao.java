@@ -28,8 +28,10 @@ public class TransactionDao {
     }
 
     @Transactional
-    public Long addTransaction(TransactionEntity t) {
-        TransactionEntity te = crudRepo.save(t);
+    public Long addTransaction(TransactionEntity ... t) {
+        TransactionEntity te = crudRepo.save(t[0]);
+        if (t[1] != null)
+            crudRepo.save(t[1]);
         return te.getId();
     }
 
