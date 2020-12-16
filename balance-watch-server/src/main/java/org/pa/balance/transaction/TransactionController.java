@@ -5,6 +5,7 @@ import org.pa.balance.client.api.TransactionsApi;
 import org.pa.balance.client.api.XtransactionsApi;
 import org.pa.balance.client.model.Transaction;
 import org.pa.balance.client.model.TransactionWrapper;
+import org.pa.balance.transactiont.TTDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,9 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
 
     @Autowired
     TransactionDelegate transactionDelegate;
+
+    @Autowired
+    TTDelegate ttDelegate;
 
     /**
      * Note: method overriden default is present in both implemented interfaces
@@ -73,7 +77,7 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
 
     @Override
     public ResponseEntity<List<TransactionWrapper>> xtransactionsGet(@NotNull @Valid Integer year, @NotNull @Min(1) @Max(12) @Valid Integer month, @NotNull @Valid Long ttId) {
-        List<TransactionWrapper> transactions = transactionDelegate.generateTransactions(YearMonth.of(year, month), ttId);
+        List<TransactionWrapper> transactions = ttDelegate.generateTransactions(YearMonth.of(year, month), ttId);
 
         return new ResponseEntity(transactions, HttpStatus.OK);
     }

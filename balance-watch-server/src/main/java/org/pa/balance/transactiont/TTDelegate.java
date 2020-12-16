@@ -1,9 +1,12 @@
 package org.pa.balance.transactiont;
 
 import org.mapstruct.factory.Mappers;
+import org.pa.balance.algo.FrequencyGeneratorLocalizer;
 import org.pa.balance.client.model.Span;
 import org.pa.balance.client.model.TT;
 import org.pa.balance.client.model.TTWrapperRes;
+import org.pa.balance.client.model.TransactionWrapper;
+import org.pa.balance.transaction.TransactionDelegate;
 import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 import org.pa.balance.transactiont.mapper.TTMapper;
 import org.pa.balance.transactiont.repository.TTRepo;
@@ -11,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +24,13 @@ import java.util.List;
 public class TTDelegate {
 
     @Autowired
-    private TTRepo ttRepo;
+    TTRepo transactionTemplateDao;
+
+    @Autowired
+    FrequencyGeneratorLocalizer frequencyGeneratorLocalizer;
+
+    @Autowired
+    TransactionDelegate transactionDelegate;
 
     /**
      * At this point, the validation has been done for a minimum number of 1 Frequency items in the dto - look at generated pojo for JSR-380 annotation.
@@ -40,18 +51,18 @@ public class TTDelegate {
 
         TTMapper ttMapper = Mappers.getMapper(TTMapper.class);
         TransactionTemplateEntity tte = ttMapper.fromDtoToEntity(body);
-        Long id = ttRepo.add(tte, ttGroupId);
+        Long id = transactionTemplateDao.add(tte, ttGroupId);
         return id;
     }
 
     public List<TTWrapperRes> getTransactionTemplates(Long account) {
-        List<TransactionTemplateEntity> teList = ttRepo.getTransactionTemplates(account);
+        List<TransactionTemplateEntity> teList = transactionTemplateDao.getTransactionTemplates(account);
         return mapEntityListToDtoWrapper(teList);
     }
 
     public List<TTWrapperRes> findAllTransactionTemplatesForGroup(Long groupId)
     {
-        List<TransactionTemplateEntity> teList = ttRepo.getTransactionTemplatesForGroup(groupId);
+        List<TransactionTemplateEntity> teList = transactionTemplateDao.getTransactionTemplatesForGroup(groupId);
         return mapEntityListToDtoWrapper(teList);
     }
 
@@ -73,6 +84,20 @@ public class TTDelegate {
     public void updateTransactionTemplate(Long id, TT data) {
         TTMapper ttMapper = Mappers.getMapper(TTMapper.class);
         TransactionTemplateEntity tte = ttMapper.fromDtoToEntity(data);
-        ttRepo.update(id, tte);
+        transactionTemplateDao.update(id, tte);
+    }
+
+    /**
+     * Return the list of generated (and persisted) Transactions, based on a Transaction Template.
+     * Note: the previous transaction date may be required for some transaction date generation algorithms.
+     * @param yearMonth
+     * @param ttId
+     * @return
+     */
+    public List<TransactionWrapper> generateTransactions(YearMonth yearMonth, Long ttId) {
+        TransactionTemplateEntity tte = transactionTemplateDao.findById(ttId);
+        String frequencyDescriptor = tte.getFrequency();
+        List<LocalDateTime> genTransactionDateList = frequencyGeneratorLocalizer.localize(frequencyDescriptor).generate(frequencyDescriptor, yearMonth, tte.getSpanList());
+        return transactionDelegate.generateTransactions(genTransactionDateList, tte);
     }
 }

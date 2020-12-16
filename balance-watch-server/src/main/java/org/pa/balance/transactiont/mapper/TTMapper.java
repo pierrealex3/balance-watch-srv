@@ -25,6 +25,7 @@ public interface TTMapper {
 
     @Mapping(target = "tt_id", ignore = true)
     @Mapping(target = "acctId", source = "account")
+    @Mapping(target = "acctIdConn", source = "accountConnection")
     @Mapping(target = "spanList", source = "spans")
     TransactionTemplateEntity fromDtoToEntity(TT d);
 
@@ -35,7 +36,7 @@ public interface TTMapper {
     // GET
 
     @Mapping(target = "account", source = "acctId")
-    @Mapping(target= "accountConnection", ignore = true)
+    @Mapping(target= "accountConnection", source = "acctIdConn")
     @Mapping(target = "spans", source = "spanList")
     TT fromEntityToDto(TransactionTemplateEntity te);
 

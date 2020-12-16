@@ -17,6 +17,7 @@ import org.pa.balance.user.info.UserInfoProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,9 +41,6 @@ public class TransactionDelegate {
 
     @Autowired
     TTRepo transactionTemplateDao;
-
-    @Autowired
-    FrequencyGeneratorLocalizer frequencyGeneratorLocalizer;
 
     @Autowired
     AccountDao accountDao;
@@ -158,15 +156,12 @@ public class TransactionDelegate {
     /**
      * Return the list of generated (and persisted) Transactions, based on a Transaction Template.
      * Note: the previous transaction date may be required for some transaction date generation algorithms.
-     * @param yearMonth
-     * @param ttId
+     * @param genTransactionDateList
+     * @param tte
      * @return
      */
-    public List<TransactionWrapper> generateTransactions(YearMonth yearMonth, Long ttId) {
-
-        TransactionTemplateEntity tte = transactionTemplateDao.findById(ttId);
-        String frequencyDescriptor = tte.getFrequency();
-        List<LocalDateTime> genTransactionDateList = frequencyGeneratorLocalizer.localize(frequencyDescriptor).generate(frequencyDescriptor, yearMonth, tte.getSpanList());
+    @Transactional
+    public List<TransactionWrapper> generateTransactions(List<LocalDateTime> genTransactionDateList, TransactionTemplateEntity tte) {
 
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         return genTransactionDateList.stream().map( d -> {
@@ -182,11 +177,14 @@ public class TransactionDelegate {
             te.setAmount(tte.getAmount());
             te.setWay(tte.getWay());
             te.setNote(tte.getNote());
-            te.setAcctId(tte.getAcctId());  // TODO should add the connAccountId as well
 
-            te.setTtIdGen(ttId);    // useful for tracing the origin of a transaction: tt-generated or created manually?
+            te.setTtIdGen(tte.getTt_id());    // useful for tracing the origin of a transaction: tt-generated or created manually?
+            te.setAcctId(tte.getAcctId());
+            te.setAcctIdConn(tte.getAcctIdConn());
 
-            Long tid = transactionDao.addTransaction(te);
+            TransactionEntity teConn = Optional.ofNullable(tte.getAcctIdConn()).map( a -> this.addConnectedTransaction(te, false) ).orElse(null);
+
+            Long tid = transactionDao.addTransaction(te, teConn);
             Transaction t = mapper.fromEntityToDto(te);
             TransactionWrapper tw = new TransactionWrapper();
             tw.setId(tid);
