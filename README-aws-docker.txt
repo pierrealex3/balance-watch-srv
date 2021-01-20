@@ -1,3 +1,8 @@
+------- AWS links -------
+docs.aws.amazon.com					// doc root and SDK doc (Java, JS, etc.)
+https://aws.amazon.com/cli			// get the aws cli
+https://console.aws.amazon.com 		// login and create account
+
 Docker on AWS
 
 ways of deploying docker on aws

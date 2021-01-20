@@ -57,8 +57,8 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         http
                 .authorizeRequests()
                 .antMatchers("/**")
-                .hasAnyRole("user")
-                .anyRequest()
+                .hasAnyRole("user") // comment out to TEST w/o jwt token check
+                .anyRequest() // comment out to TEST w/o jwt token check
                 .permitAll();
 
         http.cors();
