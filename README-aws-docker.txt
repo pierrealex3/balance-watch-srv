@@ -2,6 +2,9 @@
 docs.aws.amazon.com					// doc root and SDK doc (Java, JS, etc.)
 https://aws.amazon.com/cli			// get the aws cli
 https://console.aws.amazon.com 		// login and create account
+	Sign in as IAM user:
+	507074755765
+	palemireuser
 
 Docker on AWS
 

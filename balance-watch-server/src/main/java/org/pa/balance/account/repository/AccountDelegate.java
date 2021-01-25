@@ -97,4 +97,8 @@ public class AccountDelegate
         AccountEntity detached = m.fromDtoToEntity(body);
         accountDao.updateAccount(accountId, detached);
     }
+
+    public UserAccountRightsPattern getUserAccountRights(Long accountId) {
+        return Optional.ofNullable(accountDao.getUserAccountRights(userInfoProxy.getAuthenticatedUser() , accountId)).map(UserAccountRightsPattern::from).orElseThrow( () -> new UnrelatedAccountException(String.format("Authenticated user : %s has no rights on account : %d", userInfoProxy.getAuthenticatedUser(), accountId)) );
+    }
 }

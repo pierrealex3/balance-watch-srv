@@ -1,9 +1,8 @@
 package org.pa.balance.transaction;
 
 import org.mapstruct.factory.Mappers;
-import org.pa.balance.account.AccountDao;
 import org.pa.balance.account.UserAccountRightsPattern;
-import org.pa.balance.algo.FrequencyGeneratorLocalizer;
+import org.pa.balance.account.repository.AccountDelegate;
 import org.pa.balance.client.model.Transaction;
 import org.pa.balance.client.model.TransactionWrapper;
 import org.pa.balance.error.InternalException;
@@ -24,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,12 +41,17 @@ public class TransactionDelegate {
     TTRepo transactionTemplateDao;
 
     @Autowired
-    AccountDao accountDao;
+    AccountDelegate accountDelegate;
 
     @Autowired
     UserInfoProxy userInfoProxy;
 
     public List<TransactionWrapper> getTransactions(Integer year, Integer month, Long account) {
+
+        UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(account);
+        if (!rightsPattern.isRead())
+            throw new ReadTransactionsForbiddenException(String.format("Cannot read transactions.  Authenticated user : %s has no read right on account : %d", userInfoProxy.getAuthenticatedUser(), account));
+
         List<TransactionEntity> transactionEntities = transactionDao.getTransactions(year, month, account);
 
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
@@ -83,11 +86,7 @@ public class TransactionDelegate {
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         TransactionEntity te = mapper.fromDtoToEntity(t);
 
-        Integer userAccountRights = accountDao.getUserAccountRights(userInfoProxy.getAuthenticatedUser(), t.getAccount());
-        if (userAccountRights == null)
-            throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no rights on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
-
-        UserAccountRightsPattern rightsPattern = UserAccountRightsPattern.from(userAccountRights);
+        UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(t.getAccount());
         if (!rightsPattern.isAdmin())
             throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no admin right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
 
@@ -111,9 +110,7 @@ public class TransactionDelegate {
      */
     TransactionEntity addConnectedTransaction(TransactionEntity te, boolean manual) {
 
-        Integer userAccountRights = accountDao.getUserAccountRights(userInfoProxy.getAuthenticatedUser(), te.getAcctIdConn());
-        UserAccountRightsPattern rightsPattern = Optional.ofNullable(userAccountRights).map( UserAccountRightsPattern::from ).orElseThrow( () -> new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no rights on connected account : %d", userInfoProxy.getAuthenticatedUser(), te.getAcctIdConn())));
-
+        UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(te.getAcctIdConn());
         if (!rightsPattern.isTransfer())
             throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no transfer right on connected account : %d", userInfoProxy.getAuthenticatedUser(), te.getAcctIdConn()));
 

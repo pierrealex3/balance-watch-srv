@@ -29,6 +29,8 @@ public class UserAccountRightsPattern
         return ((rightsPattern.intValue() >> 2) & 1) == 1;
     }
 
+    public boolean isRead() { return ((rightsPattern.intValue() >> 3) & 1) == 1; }
+
     public static class UserAccountRightsPatternBuilder {
 
         private UserAccountRightsPattern target = new UserAccountRightsPattern();
@@ -52,11 +54,16 @@ public class UserAccountRightsPattern
             return this;
         }
 
+        public UserAccountRightsPatternBuilder addRead() {
+            this.target.rightsPattern += 8;
+            return this;
+        }
+
         /**
          * All the existing rights should be assigned!
          */
         public UserAccountRightsPatternBuilder addVip() {
-            addOwner().addAdmin().addTransfer();
+            addOwner().addAdmin().addTransfer().addRead();
             return this;
         }
 
