@@ -1,13 +1,16 @@
 package org.pa.balance.user;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name="Users")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @EqualsAndHashCode(exclude = {})
 public class UserEntity
 {

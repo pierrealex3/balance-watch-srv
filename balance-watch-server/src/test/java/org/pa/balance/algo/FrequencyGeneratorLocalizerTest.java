@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// note: as of SpringBoot 2.1, this extension is not required WHEN using @DataJpaTest, @WebMvcTest and @SpringBootTest since it's included as a meta-annotation in those.
 @ExtendWith(SpringExtension.class)
 @Import({
         FrequencyGeneratorLocalizer.class,
@@ -99,8 +100,9 @@ class FrequencyGeneratorLocalizerTest
         final String algoSpec = "dayOfYear=9-25;time=28h59m";
         AbstractFrequencyGenerator gen = localizer.localize(algoSpec);
         assertEquals(DayOfYearAlgo.class, gen.getClass());
+        YearMonth ym = YearMonth.of(2020, Month.SEPTEMBER);
         assertThrows( DateGenValidationException.class, () -> {
-            List<LocalDateTime> transactionDateList = gen.generate(algoSpec, YearMonth.of(2020, Month.SEPTEMBER), SPAN_LIST_ACTIVE_ALL_2020);
+            gen.generate(algoSpec, ym, SPAN_LIST_ACTIVE_ALL_2020);
         });
     }
 

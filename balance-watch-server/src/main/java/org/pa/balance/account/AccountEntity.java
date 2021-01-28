@@ -1,13 +1,16 @@
 package org.pa.balance.account;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name="Accounts")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @EqualsAndHashCode(exclude = {})
 public class AccountEntity
 {
