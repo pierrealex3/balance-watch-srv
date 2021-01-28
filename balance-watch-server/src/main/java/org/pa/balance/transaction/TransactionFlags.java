@@ -1,8 +1,12 @@
 package org.pa.balance.transaction;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 /**
@@ -14,6 +18,10 @@ import lombok.Setter;
 public class TransactionFlags
 {
     private Byte flags = 0;
+
+    public static TransactionFlags from(Byte b) {
+        return new TransactionFlags(b);
+    }
 
     public boolean isManual() {
         return (flags & 1) == 1;

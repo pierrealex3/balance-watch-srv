@@ -190,3 +190,5 @@ definitions:
       ttIdGen:
         type: "integer"
         format: "int64"
+      flagSubmitted:
+        type: "boolean"

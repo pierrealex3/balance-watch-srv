@@ -6,9 +6,10 @@ import org.mapstruct.MappingTarget;
 import org.pa.balance.client.model.Transaction;
 import org.pa.balance.service.DateTranslator;
 import org.pa.balance.service.IndToAggr;
+import org.pa.balance.transaction.TransactionFlags;
 import org.pa.balance.transaction.entity.TransactionEntity;
 
-@Mapper( uses = GeneralDates.class )
+@Mapper( uses = GeneralDates.class, imports = TransactionFlags.class)
 public interface TransactionMapper {
 
     void updateManagedWithDetached(TransactionEntity detached, @MappingTarget TransactionEntity managed);
@@ -17,6 +18,7 @@ public interface TransactionMapper {
     @Mapping(target = "amount", source = "amount")
     @Mapping(target = "account", source = "acctId")
     @Mapping(target = "accountConnection", source = "acctIdConn")
+    @Mapping(target = "flagSubmitted", expression = "java(TransactionFlags.from(t.getActionFlags()).isSubmitted())")
     Transaction fromEntityToDto(TransactionEntity t);
 
     @Mapping(target = "year", source = "date.year")
@@ -28,4 +30,7 @@ public interface TransactionMapper {
     @Mapping(target = "acctId", source = "account")
     @Mapping(target = "acctIdConn", source = "accountConnection")
     TransactionEntity fromDtoToEntity(Transaction t);
+
 }
+
+
