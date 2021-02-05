@@ -12,6 +12,7 @@ import org.pa.balance.transaction.entity.TransactionEntity;
 @Mapper( uses = GeneralDates.class, imports = TransactionFlags.class)
 public interface TransactionMapper {
 
+    @Mapping(target = "actionFlags", ignore = true)
     void updateManagedWithDetached(TransactionEntity detached, @MappingTarget TransactionEntity managed);
 
     @Mapping(target = "date", source="t", qualifiedBy = {DateTranslator.class, IndToAggr.class})

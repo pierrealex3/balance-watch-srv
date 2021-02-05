@@ -66,10 +66,10 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
 
     @Override
     public ResponseEntity<Void> transactionsIdPut(Long id, Transaction body) {
-        Long idx = transactionDelegate.updateTransaction(body, id);
+        transactionDelegate.updateTransaction(body, id);
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("X-Internal-Id", String.valueOf(idx));
+        headers.add("X-Internal-Id", String.valueOf(id));
 
         return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     }

@@ -34,6 +34,7 @@ public class TransactionEntity implements Serializable
     private Long ttIdGen;
 
     // ACCEPTED | SUBMITTED | MANUAL | 0x1 GENERATED
+    @Column(name = "action_flags")
     private Byte actionFlags;
     private LocalDateTime dateModified;
 

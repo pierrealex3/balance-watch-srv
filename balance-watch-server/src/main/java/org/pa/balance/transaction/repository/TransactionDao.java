@@ -36,15 +36,10 @@ public class TransactionDao {
     }
 
     @Transactional
-    public Long updateTransaction(TransactionEntity t, Long id) {
-
+    public void updateTransaction(TransactionEntity t, Long id) {
         TransactionEntity mte = crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)) );
-
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
-
         mapper.updateManagedWithDetached(t, mte);
-        TransactionEntity ute = crudRepo.save(mte);
-        return ute.getId();
     }
 
     @Transactional
