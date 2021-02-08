@@ -143,7 +143,7 @@ public class TransactionDelegate {
         return teConn;
     }
 
-    public void updateTransaction(Transaction t, Long id) {
+    public long updateTransaction(Transaction t, Long id) {
         UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(t.getAccount());
         if (!rightsPattern.isAdmin())
             throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no admin right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
@@ -151,7 +151,7 @@ public class TransactionDelegate {
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         TransactionEntity te = mapper.fromDtoToEntity(t);
         te.setId(id);
-        transactionDao.updateTransaction(te, id);
+        return transactionDao.updateTransaction(te, id);
     }
 
     /**

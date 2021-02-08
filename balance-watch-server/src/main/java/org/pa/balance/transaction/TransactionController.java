@@ -1,6 +1,5 @@
 package org.pa.balance.transaction;
 
-import org.apache.coyote.Response;
 import org.pa.balance.client.api.TransactionsApi;
 import org.pa.balance.client.api.XtransactionsApi;
 import org.pa.balance.client.model.Transaction;
@@ -18,7 +17,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
@@ -66,10 +64,11 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
 
     @Override
     public ResponseEntity<Void> transactionsIdPut(Long id, Transaction body) {
-        transactionDelegate.updateTransaction(body, id);
+        long lastModified = transactionDelegate.updateTransaction(body, id);
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("X-Internal-Id", String.valueOf(id));
+        headers.add("X-Last-Modified", String.valueOf(lastModified));
 
         return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     }
@@ -79,7 +78,7 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
     public ResponseEntity<List<TransactionWrapper>> xtransactionsGet(@NotNull @Valid Integer year, @NotNull @Min(1) @Max(12) @Valid Integer month, @NotNull @Valid Long ttId) {
         List<TransactionWrapper> transactions = ttDelegate.generateTransactions(YearMonth.of(year, month), ttId);
 
-        return new ResponseEntity(transactions, HttpStatus.OK);
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
     @Override

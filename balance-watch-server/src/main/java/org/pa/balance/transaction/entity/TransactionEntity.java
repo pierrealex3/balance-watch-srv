@@ -6,7 +6,7 @@ import org.pa.balance.model.Reminder;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "Transactions")
@@ -36,7 +36,8 @@ public class TransactionEntity implements Serializable
     // ACCEPTED | SUBMITTED | MANUAL | 0x1 GENERATED
     @Column(name = "action_flags")
     private Byte actionFlags;
-    private LocalDateTime dateModified;
+    @Column(name = "date_modified")
+    private ZonedDateTime dateModified;
 
     @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
     private transient Reminder reminder;

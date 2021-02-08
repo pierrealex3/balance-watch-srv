@@ -5,6 +5,10 @@ https://console.aws.amazon.com 		// login and create account
 	Sign in as IAM user:
 	507074755765
 	palemireuser
+	
+	Root user:
+	palemire
+	GHvDbLc514
 
 Docker on AWS
 

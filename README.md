@@ -1,6 +1,10 @@
 # balance-watch-srv
 server side for balance watch
 
+#########################
+## MySQL Config
+#########################
+
 -- Local install of MySQL Server 8.0.21 Community Edition (CE) for dev
 MySQL 8.0 Connector which use libmysqlclient 8.0 support is required for compliance with the new authentication based on SHA256 password methods.
 
@@ -10,8 +14,9 @@ MySQL User Account:
 user: springuser
 pass: GoGoPass321!
 
-
--- NGINX config for http { block directive
+#########################
+## NGINX config for http { block directive
+#########################
 
 - note: (oct 15 2020)
 this works but there are problems reported in the web console at the start: ->
@@ -76,3 +81,22 @@ http {
     
   ...
   }
+  
+  #########################
+  ## security with KeyCloak 
+  #########################
+  
+  // startup standalone server
+  ..\bin\standalone.bat -Djboss.socket.binding.port-offset=100
+  http://localhost:8180/auth/admin/
+  (palemire/cremePoff666)
+  
+  (user Mr. Pedro Gonzalo) abc@hotmail.com / kodakkkk
+  
+  // Token endpoint  - access token with permissions (Requesting Party Token aka RPT)
+  
+  Token Endpoint
+  OAuth2 clients (such as front end applications) can obtain access tokens from the server using the token endpoint and use these same tokens to access resources protected by a resource server (such as back end services). In the same way, Keycloak Authorization Services provide extensions to OAuth2 to allow access tokens to be issued based on the processing of all policies associated with the resource(s) or scope(s) being requested. This means that resource servers can enforce access to their protected resources based on the permissions granted by the server and held by an access token. In Keycloak Authorization Services the access token with permissions is called a Requesting Party Token or RPT for short.
+  
+  // User Realm created from the Master realm: this is what users have access to
+  http://localhost:8080/auth/realms/mds/account/

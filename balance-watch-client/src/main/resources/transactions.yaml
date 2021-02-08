@@ -44,6 +44,13 @@ paths:
       responses:
         405:
           description: "Invalid Input"
+        200:
+          description: "Successful transaction update"
+          headers:
+            X-Last-Modified:
+              description: An epoch tag that represents the last modification
+              type: integer
+              format: int64
     get:
       tags:
         - "transactions"

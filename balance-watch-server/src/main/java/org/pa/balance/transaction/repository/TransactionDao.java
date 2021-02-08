@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
@@ -29,6 +31,7 @@ public class TransactionDao {
 
     @Transactional
     public Long addTransaction(TransactionEntity ... t) {
+        setDateNowUtc(t[0]);
         TransactionEntity te = crudRepo.save(t[0]);
         if (t[1] != null)
             crudRepo.save(t[1]);
@@ -36,10 +39,13 @@ public class TransactionDao {
     }
 
     @Transactional
-    public void updateTransaction(TransactionEntity t, Long id) {
+    public long updateTransaction(@NotNull TransactionEntity t, @NotNull Long id) {
         TransactionEntity mte = crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)) );
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
+
+        long lastUpdated = setDateNowUtc(t);
         mapper.updateManagedWithDetached(t, mte);
+        return lastUpdated;
     }
 
     @Transactional
@@ -52,5 +58,19 @@ public class TransactionDao {
     public void deleteTransaction(Long id)
     {
         crudRepo.deleteById(id);
+    }
+
+    /**
+     * Saves the last modification into the database for the given transaction.
+     * Note: the date is saved as UTC because of either:
+     * ?serverTimezone=UTC in the JDBC URI
+     * spring.jpa.properties.hibernate.jdbc.time_zone=UTC // supported in MySql8
+     * @param te
+     * @return
+     */
+    long setDateNowUtc(TransactionEntity te) {
+        var zdt = ZonedDateTime.now();
+        te.setDateModified(zdt);
+        return zdt.toInstant().toEpochMilli();
     }
 }
