@@ -60,6 +60,7 @@ public class TransactionDelegate {
         transactionEntities.forEach( te -> {
             TransactionWrapper tw = new TransactionWrapper();
             tw.setId(te.getId());
+            tw.setLastModified(Optional.ofNullable(te.getDateModified()).map( zdt -> zdt.toInstant().toEpochMilli() ).orElse(null));
             tw.setData(mapper.fromEntityToDto(te));
             transactions.add(tw);
         });
@@ -67,7 +68,7 @@ public class TransactionDelegate {
         return transactions;
     }
 
-    public Long addTransaction(Transaction t) {
+    public TransactionWrapper addTransaction(Transaction t) {
         return addTransaction(t, true);
     }
 
@@ -78,7 +79,7 @@ public class TransactionDelegate {
      * @param manual switch to reuse this method for manual vs generated transaction flags set
      * @return
      */
-    public Long addTransaction(Transaction t, boolean manual) {
+    public TransactionWrapper addTransaction(Transaction t, boolean manual) {
 
         if (t.getAccount().equals(t.getAccountConnection()))
             throw new AddTransactionAccountConnectionException();
@@ -99,7 +100,11 @@ public class TransactionDelegate {
             teConn = addConnectedTransaction(te, manual);
         }
 
-        return transactionDao.addTransaction(te, teConn);
+        Long tid = transactionDao.addTransaction(te, teConn);
+        var tw = new TransactionWrapper();
+        tw.setId(tid);
+        tw.setLastModified(Optional.ofNullable(te.getDateModified()).map(zdt -> zdt.toInstant().toEpochMilli()).orElse(null));
+        return tw;
     }
 
     /**
@@ -196,11 +201,16 @@ public class TransactionDelegate {
 
     }
 
-    public Transaction getTransaction(Long id)
+    public TransactionWrapper getTransaction(Long id)
     {
         TransactionEntity te = transactionDao.getTransaction(id);
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
-        return mapper.fromEntityToDto(te);
+        Transaction t = mapper.fromEntityToDto(te);
+        var tw = new TransactionWrapper();
+        tw.setId(id);
+        tw.setLastModified(Optional.ofNullable(te.getDateModified()).map(zdt -> zdt.toInstant().toEpochMilli()).orElse(null));
+        tw.setData(t);
+        return tw;
     }
 
     public void deleteTransaction(Long id)

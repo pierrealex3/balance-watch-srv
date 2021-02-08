@@ -54,10 +54,11 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
 
     @Override
     public ResponseEntity<Void> transactionsPost(Transaction body) {
-        Long id = transactionDelegate.addTransaction(body);
+        TransactionWrapper tw = transactionDelegate.addTransaction(body);
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("X-Internal-Id", String.valueOf(id));
+        headers.add("X-Internal-Id", String.valueOf(tw.getId()));
+        headers.add("X-Last-Modified", String.valueOf(tw.getLastModified()));
 
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
@@ -84,7 +85,12 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
     @Override
     public ResponseEntity<Transaction> transactionsIdGet(Long id)
     {
-        Transaction t = transactionDelegate.getTransaction(id);
-        return new ResponseEntity<>(t, HttpStatus.OK);
+        TransactionWrapper tw = transactionDelegate.getTransaction(id);
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("X-Internal-Id", String.valueOf(id));
+        headers.add("X-Last-Modified", String.valueOf(tw.getLastModified()));
+
+        return new ResponseEntity<>(tw.getData(), headers, HttpStatus.OK);
     }
 }

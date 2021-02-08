@@ -161,12 +161,16 @@ paths:
 
 definitions:
   TransactionWrapper:
-    type: "object"
+    type: object
     properties:
       id:
-        type: "integer"
-        format: "int64"
-        description: "Internal ID used by the database"
+        type: integer
+        format: int64
+        description: Internal ID used by the database
+      lastModified:
+        type: integer
+        format: int64
+        description: An epoch tag that represents the last modification
       data:
         $ref: "#/definitions/Transaction"
   Transaction:
