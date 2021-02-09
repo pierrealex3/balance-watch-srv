@@ -30,6 +30,7 @@ public class TransactionEntity implements Serializable
     private String note;
     private String noteXtra;
     private Long acctId;
+    @Column(name = "id_conn")
     private Long idConn;
     private Long ttIdGen;
 

@@ -13,7 +13,18 @@ import org.pa.balance.transaction.entity.TransactionEntity;
 public interface TransactionMapper {
 
     @Mapping(target = "actionFlags", ignore = true)
+    @Mapping(target = "way", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "idConn", ignore = true)
+    @Mapping(target = "acctId", ignore = true)
     void updateManagedWithDetached(TransactionEntity detached, @MappingTarget TransactionEntity managed);
+
+    @Mapping(target = "actionFlags", ignore = true)
+    @Mapping(target = "way", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "idConn", ignore = true)
+    @Mapping(target = "acctId", ignore = true)
+    void updateConnectedManagedWithDetached(TransactionEntity detached, @MappingTarget TransactionEntity managed);
 
     @Mapping(target = "date", source="t", qualifiedBy = {DateTranslator.class, IndToAggr.class})
     @Mapping(target = "amount", source = "amount")

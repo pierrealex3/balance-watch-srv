@@ -166,7 +166,15 @@ public class TransactionDelegate {
     public long updateTransaction(Transaction t, Long id, Long lastModifiedEpoch) {
         UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(t.getAccount());
         if (!rightsPattern.isAdmin())
-            throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no admin right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
+            throw new UpdateTransactionForbiddenException(String.format("Cannot update transaction.  Authenticated user : %s has no ADMIN right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
+
+        if (t.getIdConn() != null) {
+            Long connAccount = transactionDao.getAccountHoldingTransaction(t.getIdConn());
+            UserAccountRightsPattern connAccountRightsPattern = accountDelegate.getUserAccountRights(connAccount);
+            if (!connAccountRightsPattern.isTransfer()) {
+                throw new UpdateTransactionForbiddenException(String.format("Cannot update connected transaction.  Authenticated user : %s has no TRANSFER right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccountConnection()));
+            }
+        }
 
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         TransactionEntity te = mapper.fromDtoToEntity(t);

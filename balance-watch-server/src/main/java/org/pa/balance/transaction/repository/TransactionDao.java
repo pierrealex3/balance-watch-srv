@@ -6,6 +6,7 @@ import org.pa.balance.transaction.UpdateTransactionConcurrentException;
 import org.pa.balance.transaction.entity.TransactionEntity;
 import org.pa.balance.transaction.mapper.TransactionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,8 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class TransactionDao {
@@ -46,15 +49,24 @@ public class TransactionDao {
 
     @Transactional
     public long updateTransaction(@NotNull TransactionEntity t, @NotNull Long id, @NotNull Long lastModifiedEpoch) {
-        TransactionEntity mte = crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)) );
+        TransactionEntity tbme = crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)) );
 
-        if (mte.getDateModified().toInstant().toEpochMilli() != lastModifiedEpoch)
+        if (tbme.getDateModified().toInstant().toEpochMilli() != lastModifiedEpoch)
             throw new UpdateTransactionConcurrentException();
+
+        TransactionEntity tbmeConn = Optional.ofNullable(tbme.getIdConn()).map( this::getTransaction ).orElse(null);
 
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
 
         long lastUpdated = setDateNowUtc(t);
-        mapper.updateManagedWithDetached(t, mte);
+
+        if (tbmeConn != null) {
+            // lock both "Transaction" database  rows for update
+            crudRepo.selectForUpdateWithConnectedTransaction(tbme.getId(), tbmeConn.getId());
+            mapper.updateConnectedManagedWithDetached(t, tbmeConn);
+        }
+
+        mapper.updateManagedWithDetached(t, tbme);
         return lastUpdated;
     }
 
@@ -80,7 +92,13 @@ public class TransactionDao {
      */
     long setDateNowUtc(TransactionEntity ... te) {
         var zdt = ZonedDateTime.now();
-        Arrays.stream(te).forEach( (tee) -> tee.setDateModified(zdt) );
+        Arrays.stream(te).filter(Objects::nonNull).forEach( (tee) -> tee.setDateModified(zdt) );
         return zdt.toInstant().toEpochMilli();
+    }
+
+    @Cacheable("transactionAccounts")
+    public Long getAccountHoldingTransaction(Long transactionId)
+    {
+        return crudRepo.selectAccountForTransactionId(transactionId);
     }
 }
