@@ -203,6 +203,9 @@ definitions:
       accountConnection:
         type: integer
         format: int64
+      idConn:
+        type: integer
+        format: int64
       ttIdGen:
         type: "integer"
         format: "int64"

@@ -99,8 +99,8 @@ public class TransactionDelegate {
         te.setActionFlags(tf.getFlags());
 
         TransactionEntity teConn = null;
-        if (te.getAcctIdConn() != null) {
-            teConn = addConnectedTransaction(te, manual);
+        if (t.getAccountConnection() != null) {
+            teConn = addConnectedTransaction(te, t.getAccountConnection(), manual);
         }
 
         Long tid = transactionDao.addTransaction(te, teConn);
@@ -113,14 +113,15 @@ public class TransactionDelegate {
     /**
      * Adds a connected transaction in relation with the specified transaction.
      * @param te
+     * @param connectedAccount
      * @param manual switch to reuse this method for manual vs generated transaction flags set
      * @return
      */
-    TransactionEntity addConnectedTransaction(TransactionEntity te, boolean manual) {
+    TransactionEntity addConnectedTransaction(TransactionEntity te, Long connectedAccount, boolean manual) {
 
-        UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(te.getAcctIdConn());
+        UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(connectedAccount);
         if (!rightsPattern.isTransfer())
-            throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no transfer right on connected account : %d", userInfoProxy.getAuthenticatedUser(), te.getAcctIdConn()));
+            throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no transfer right on connected account : %d", userInfoProxy.getAuthenticatedUser(), connectedAccount));
 
         TransactionFlags.TransactionFlagsBuilder tb = new TransactionFlags.TransactionFlagsBuilder();
         tb  = manual ? tb.addManual() : tb.addGenerated();
@@ -130,6 +131,19 @@ public class TransactionDelegate {
         }
         TransactionFlags tf = tb.build();
 
+        TransactionEntity teConn = generateConnectedTransactionEntity(te, connectedAccount);
+        teConn.setActionFlags(tf.getFlags());
+        return teConn;
+    }
+
+    /**
+     * Returns a deep-clone of the TransactionEntity provided, with a handful of switched properties.
+     * For example, if the provided transaction is DEBIT, the connected one will be CREDIT.
+     * @param te
+     * @param connectedAccount
+     * @return
+     */
+    TransactionEntity generateConnectedTransactionEntity(TransactionEntity te, Long connectedAccount) {
         TransactionEntity teConn = null;
         try
         {
@@ -144,9 +158,7 @@ public class TransactionDelegate {
             throw new InternalException("Problem while deep cloning the TransactionEntity for the connected-account side");
         }
 
-        teConn.setAcctId(te.getAcctIdConn());
-        teConn.setAcctIdConn(te.getAcctId());
-        teConn.setActionFlags(tf.getFlags());
+        teConn.setAcctId(connectedAccount);
         teConn.setWay( te.getWay() == TransactionWay.DEBIT ? TransactionWay.CREDIT : TransactionWay.DEBIT ) ;
         return teConn;
     }
@@ -190,9 +202,8 @@ public class TransactionDelegate {
 
             te.setTtIdGen(tte.getTt_id());    // useful for tracing the origin of a transaction: tt-generated or created manually?
             te.setAcctId(tte.getAcctId());
-            te.setAcctIdConn(tte.getAcctIdConn());
 
-            TransactionEntity teConn = Optional.ofNullable(tte.getAcctIdConn()).map( a -> this.addConnectedTransaction(te, false) ).orElse(null);
+            TransactionEntity teConn = Optional.ofNullable(tte.getAcctIdConn()).map( a -> this.addConnectedTransaction(te, tte.getAcctIdConn(), false) ).orElse(null);
 
             Long tid = transactionDao.addTransaction(te, teConn);
             Transaction t = mapper.fromEntityToDto(te);

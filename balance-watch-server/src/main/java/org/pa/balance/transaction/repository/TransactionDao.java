@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -35,8 +36,12 @@ public class TransactionDao {
         setDateNowUtc(t[0]);
         TransactionEntity te = crudRepo.save(t[0]);
         if (t[1] != null)
-            crudRepo.save(t[1]);
-        return te.getId();
+        {   // this is where we link the 2 entities *forever*
+            TransactionEntity teConn = crudRepo.save(t[1]);
+            te.setIdConn(teConn.getId());
+            teConn.setIdConn(te.getId());
+        }
+        return te.getId();  // TODO still useful to return that?
     }
 
     @Transactional
@@ -73,9 +78,9 @@ public class TransactionDao {
      * @param te
      * @return
      */
-    long setDateNowUtc(TransactionEntity te) {
+    long setDateNowUtc(TransactionEntity ... te) {
         var zdt = ZonedDateTime.now();
-        te.setDateModified(zdt);
+        Arrays.stream(te).forEach( (tee) -> tee.setDateModified(zdt) );
         return zdt.toInstant().toEpochMilli();
     }
 }

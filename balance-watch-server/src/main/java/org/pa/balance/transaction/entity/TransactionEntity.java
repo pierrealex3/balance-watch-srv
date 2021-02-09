@@ -30,7 +30,7 @@ public class TransactionEntity implements Serializable
     private String note;
     private String noteXtra;
     private Long acctId;
-    private Long acctIdConn;
+    private Long idConn;
     private Long ttIdGen;
 
     // ACCEPTED | SUBMITTED | MANUAL | 0x1 GENERATED
