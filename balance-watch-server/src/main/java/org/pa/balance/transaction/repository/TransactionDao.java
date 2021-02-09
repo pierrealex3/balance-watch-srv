@@ -2,6 +2,7 @@ package org.pa.balance.transaction.repository;
 
 import org.mapstruct.factory.Mappers;
 import org.pa.balance.error.EntityNotFoundException;
+import org.pa.balance.transaction.UpdateTransactionConcurrentException;
 import org.pa.balance.transaction.entity.TransactionEntity;
 import org.pa.balance.transaction.mapper.TransactionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,12 @@ public class TransactionDao {
     }
 
     @Transactional
-    public long updateTransaction(@NotNull TransactionEntity t, @NotNull Long id) {
+    public long updateTransaction(@NotNull TransactionEntity t, @NotNull Long id, @NotNull Long lastModifiedEpoch) {
         TransactionEntity mte = crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)) );
+
+        if (mte.getDateModified().toInstant().toEpochMilli() != lastModifiedEpoch)
+            throw new UpdateTransactionConcurrentException();
+
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
 
         long lastUpdated = setDateNowUtc(t);

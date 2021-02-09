@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -64,8 +67,9 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
     }
 
     @Override
-    public ResponseEntity<Void> transactionsIdPut(Long id, Transaction body) {
-        long lastModified = transactionDelegate.updateTransaction(body, id);
+    public ResponseEntity<Void> transactionsIdPut(Long id, Long xLastModified, @Valid Transaction body)
+    {
+        long lastModified = transactionDelegate.updateTransaction(body, id, xLastModified);
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("X-Internal-Id", String.valueOf(id));
@@ -73,7 +77,6 @@ public class TransactionController implements TransactionsApi, XtransactionsApi 
 
         return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     }
-
 
     @Override
     public ResponseEntity<List<TransactionWrapper>> xtransactionsGet(@NotNull @Valid Integer year, @NotNull @Min(1) @Max(12) @Valid Integer month, @NotNull @Valid Long ttId) {

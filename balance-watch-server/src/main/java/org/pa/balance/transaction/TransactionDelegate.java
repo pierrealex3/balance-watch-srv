@@ -22,7 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -148,7 +151,7 @@ public class TransactionDelegate {
         return teConn;
     }
 
-    public long updateTransaction(Transaction t, Long id) {
+    public long updateTransaction(Transaction t, Long id, Long lastModifiedEpoch) {
         UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(t.getAccount());
         if (!rightsPattern.isAdmin())
             throw new AddTransactionForbiddenException(String.format("Cannot add transaction.  Authenticated user : %s has no admin right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
@@ -156,7 +159,8 @@ public class TransactionDelegate {
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         TransactionEntity te = mapper.fromDtoToEntity(t);
         te.setId(id);
-        return transactionDao.updateTransaction(te, id);
+        te.setDateModified(ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModifiedEpoch), ZoneId.of("UTC")));
+        return transactionDao.updateTransaction(te, id, lastModifiedEpoch);
     }
 
     /**
