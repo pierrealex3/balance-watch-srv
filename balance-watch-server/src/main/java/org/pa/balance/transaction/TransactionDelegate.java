@@ -5,7 +5,6 @@ import org.pa.balance.account.UserAccountRightsPattern;
 import org.pa.balance.account.repository.AccountDelegate;
 import org.pa.balance.client.model.Transaction;
 import org.pa.balance.client.model.TransactionWrapper;
-import org.pa.balance.error.EntityNotFoundException;
 import org.pa.balance.error.InternalException;
 import org.pa.balance.transaction.entity.TransactionEntity;
 import org.pa.balance.transaction.entity.TransactionWay;
@@ -15,7 +14,6 @@ import org.pa.balance.transactiont.entity.TransactionTemplateEntity;
 import org.pa.balance.transactiont.repository.TTRepo;
 import org.pa.balance.user.info.UserInfoProxy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,9 +37,6 @@ public class TransactionDelegate {
     TransactionDao transactionDao;
 
     @Autowired
-    ApplicationContext applicationContext;
-
-    @Autowired
     TTRepo transactionTemplateDao;
 
     @Autowired
@@ -50,6 +45,13 @@ public class TransactionDelegate {
     @Autowired
     UserInfoProxy userInfoProxy;
 
+    /**
+     * Returns a list of transactions.
+     * @param year
+     * @param month
+     * @param account
+     * @return
+     */
     public List<TransactionWrapper> getTransactions(Integer year, Integer month, Long account) {
 
         UserAccountRightsPattern rightsPattern = accountDelegate.getUserAccountRights(account);
@@ -58,16 +60,8 @@ public class TransactionDelegate {
 
         List<TransactionEntity> transactionEntities = transactionDao.getTransactions(year, month, account);
 
-        TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
-
         List<TransactionWrapper> transactions = new ArrayList<>();
-        transactionEntities.forEach( te -> {
-            TransactionWrapper tw = new TransactionWrapper();
-            tw.setId(te.getId());
-            tw.setLastModified(Optional.ofNullable(te.getDateModified()).map( zdt -> zdt.toInstant().toEpochMilli() ).orElse(null));
-            tw.setData(mapper.fromEntityToDto(te));
-            transactions.add(tw);
-        });
+        transactionEntities.forEach( te -> transactions.add(mapTransactionEntityToDtoWrapper(te)) );
 
         return transactions;
     }
@@ -227,13 +221,30 @@ public class TransactionDelegate {
 
     }
 
+    /**
+     * Returns a single transaction, based on its id.
+     * @param id
+     * @return
+     */
     public TransactionWrapper getTransaction(Long id)
     {
         TransactionEntity te = transactionDao.getTransaction(id);
+        return mapTransactionEntityToDtoWrapper(te);
+    }
+
+    /**
+     * Acts as a complement to the MapStruct mapper
+     * @param te
+     * @return
+     */
+    TransactionWrapper mapTransactionEntityToDtoWrapper(TransactionEntity te) {
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
         Transaction t = mapper.fromEntityToDto(te);
+
+        Optional.ofNullable(te.getIdConn()).ifPresent( idConn -> t.setAccountConnection(transactionDao.getAccountHoldingTransaction(idConn)) );
+
         var tw = new TransactionWrapper();
-        tw.setId(id);
+        tw.setId(te.getId());
         tw.setLastModified(Optional.ofNullable(te.getDateModified()).map(zdt -> zdt.toInstant().toEpochMilli()).orElse(null));
         tw.setData(t);
         return tw;

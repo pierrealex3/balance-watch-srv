@@ -60,7 +60,7 @@ public class TransactionDao {
         long lastUpdated = setDateNowUtc(updatedDetachedEntity);
 
         if (tbmeConn != null) {
-            // lock both "Transaction" database  rows for update
+            // lock both "Transaction" database rows for update
             crudRepo.selectForUpdateWithConnectedTransaction(managedEntityToUpdate.getId(), tbmeConn.getId());
             mapper.updateConnectedManagedWithDetached(updatedDetachedEntity, tbmeConn);
         }
@@ -91,7 +91,7 @@ public class TransactionDao {
      */
     long setDateNowUtc(TransactionEntity ... te) {
         var zdt = ZonedDateTime.now();
-        Arrays.stream(te).filter(Objects::nonNull).forEach( (tee) -> tee.setDateModified(zdt) );
+        Arrays.stream(te).filter(Objects::nonNull).forEach( tee -> tee.setDateModified(zdt) );
         return zdt.toInstant().toEpochMilli();
     }
 

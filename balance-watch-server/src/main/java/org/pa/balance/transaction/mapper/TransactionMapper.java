@@ -3,6 +3,7 @@ package org.pa.balance.transaction.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValueCheckStrategy;
 import org.pa.balance.client.model.Transaction;
 import org.pa.balance.service.DateTranslator;
 import org.pa.balance.service.IndToAggr;
