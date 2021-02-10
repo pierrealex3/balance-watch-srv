@@ -48,25 +48,24 @@ public class TransactionDao {
     }
 
     @Transactional
-    public long updateTransaction(@NotNull TransactionEntity t, @NotNull Long id, @NotNull Long lastModifiedEpoch) {
-        TransactionEntity tbme = crudRepo.findById(id).orElseThrow( () -> new EntityNotFoundException(String.format("No transaction found for : id=%d", id)) );
+    public long updateTransaction(@NotNull TransactionEntity updatedDetachedEntity, @NotNull TransactionEntity managedEntityToUpdate, @NotNull Long lastModifiedEpoch) {
 
-        if (tbme.getDateModified().toInstant().toEpochMilli() != lastModifiedEpoch)
+        if (managedEntityToUpdate.getDateModified().toInstant().toEpochMilli() != lastModifiedEpoch)
             throw new UpdateTransactionConcurrentException();
 
-        TransactionEntity tbmeConn = Optional.ofNullable(tbme.getIdConn()).map( this::getTransaction ).orElse(null);
+        TransactionEntity tbmeConn = Optional.ofNullable(managedEntityToUpdate.getIdConn()).map( this::getTransaction ).orElse(null);
 
         TransactionMapper mapper = Mappers.getMapper(TransactionMapper.class);
 
-        long lastUpdated = setDateNowUtc(t);
+        long lastUpdated = setDateNowUtc(updatedDetachedEntity);
 
         if (tbmeConn != null) {
             // lock both "Transaction" database  rows for update
-            crudRepo.selectForUpdateWithConnectedTransaction(tbme.getId(), tbmeConn.getId());
-            mapper.updateConnectedManagedWithDetached(t, tbmeConn);
+            crudRepo.selectForUpdateWithConnectedTransaction(managedEntityToUpdate.getId(), tbmeConn.getId());
+            mapper.updateConnectedManagedWithDetached(updatedDetachedEntity, tbmeConn);
         }
 
-        mapper.updateManagedWithDetached(t, tbme);
+        mapper.updateManagedWithDetached(updatedDetachedEntity, managedEntityToUpdate);
         return lastUpdated;
     }
 

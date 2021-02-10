@@ -5,6 +5,7 @@ import org.pa.balance.account.UserAccountRightsPattern;
 import org.pa.balance.account.repository.AccountDelegate;
 import org.pa.balance.client.model.Transaction;
 import org.pa.balance.client.model.TransactionWrapper;
+import org.pa.balance.error.EntityNotFoundException;
 import org.pa.balance.error.InternalException;
 import org.pa.balance.transaction.entity.TransactionEntity;
 import org.pa.balance.transaction.entity.TransactionWay;
@@ -168,8 +169,10 @@ public class TransactionDelegate {
         if (!rightsPattern.isAdmin())
             throw new UpdateTransactionForbiddenException(String.format("Cannot update transaction.  Authenticated user : %s has no ADMIN right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccount()));
 
-        if (t.getIdConn() != null) {
-            Long connAccount = transactionDao.getAccountHoldingTransaction(t.getIdConn());
+        TransactionEntity tbme = transactionDao.getTransaction(id);
+
+        if (tbme.getIdConn() != null) {
+            Long connAccount = transactionDao.getAccountHoldingTransaction(tbme.getIdConn());
             UserAccountRightsPattern connAccountRightsPattern = accountDelegate.getUserAccountRights(connAccount);
             if (!connAccountRightsPattern.isTransfer()) {
                 throw new UpdateTransactionForbiddenException(String.format("Cannot update connected transaction.  Authenticated user : %s has no TRANSFER right on account : %d", userInfoProxy.getAuthenticatedUser(), t.getAccountConnection()));
@@ -180,7 +183,7 @@ public class TransactionDelegate {
         TransactionEntity te = mapper.fromDtoToEntity(t);
         te.setId(id);
         te.setDateModified(ZonedDateTime.ofInstant(Instant.ofEpochMilli(lastModifiedEpoch), ZoneId.of("UTC")));
-        return transactionDao.updateTransaction(te, id, lastModifiedEpoch);
+        return transactionDao.updateTransaction(te, tbme, lastModifiedEpoch);
     }
 
     /**
