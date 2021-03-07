@@ -1,10 +1,14 @@
 package org.pa.balance.user;
 
+import org.keycloak.authorization.client.util.Http;
 import org.pa.balance.account.repository.AccountDelegate;
 import org.pa.balance.client.api.UsersApi;
 import org.pa.balance.client.model.Account;
 import org.pa.balance.client.model.AccountWrapper;
 import org.pa.balance.client.model.User;
+import org.pa.balance.client.model.UserAccountRights;
+import org.pa.balance.error.UnauthorizedUserException;
+import org.pa.balance.user.info.UserInfoProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,9 @@ public class UserController implements UsersApi
 
     @Autowired
     private AccountDelegate accountDelegate;
+
+    @Autowired
+    private UserInfoProxy userInfoProxy;
 
     @Override
     public ResponseEntity<Void> usersPost(@Valid User body)
@@ -64,13 +71,19 @@ public class UserController implements UsersApi
         return new ResponseEntity<>(accountWrapperList, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<List<User>> usersGet() {
+        if (!userInfoProxy.isAuthenticatedUserGroupAdmin()) {
+            throw new UnauthorizedUserException("Authenticated user does not have the \"group_admin\" role required to view all members of the group");
+        }
+        return new ResponseEntity<>(userDelegate.getAllUsersUnderGroupRestriction(), HttpStatus.OK);
+    }
 
-    @RequestMapping(value = "/users/{userId}/relatedAccounts",
-            produces = { "application/json" },
-            method = RequestMethod.GET)
-    public ResponseEntity<List<AccountWrapper>> usersUserIdAccountsGetRelated(@PathVariable("userId") String userId)
-    {
-        List<AccountWrapper> accountWrapperList = accountDelegate.getRelatedAccounts(userId);
-        return new ResponseEntity<>(accountWrapperList, HttpStatus.OK);
+    @Override
+    public ResponseEntity<UserAccountRights> usersUserIdAccountsAccountIdRightsGet(String userId, Long accountId) {
+        if (!userId.equals(userInfoProxy.getAuthenticatedUser()) && !userInfoProxy.isAuthenticatedUserGroupAdmin()) {
+            throw new UnauthorizedUserException(String.format("Authenticated user does not have the \"group_admin\" role required to view account rights for user %s", userId));
+        }
+        return new ResponseEntity<>(accountDelegate.fetchUserAccountRights(accountId, userId), HttpStatus.OK);
     }
 }

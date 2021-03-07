@@ -4,10 +4,12 @@ import org.mapstruct.factory.Mappers;
 import org.pa.balance.account.*;
 import org.pa.balance.client.model.Account;
 import org.pa.balance.client.model.AccountWrapper;
+import org.pa.balance.client.model.UserAccountRights;
 import org.pa.balance.user.UserDao;
 import org.pa.balance.user.UserEntity;
 import org.pa.balance.user.info.UserInfoProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -57,17 +59,15 @@ public class AccountDelegate
     }
 
     /**
-     * TODO add required role security to access this method
-     * @param userId
+     * Returns all accounts associated to the group (i.e. MDS_* group in KeyCloak database) of the authenticated user.
      * @return
      */
-    public List<AccountWrapper> getRelatedAccounts(String userId)
+    public List<AccountWrapper> getRelatedAccounts()
     {
-        userDao.getUser(userId);    // will throw if not found
         AccountMapper mapper = Mappers.getMapper(AccountMapper.class);
 
         Optional<String> targetGroup = userInfoProxy.getAuthenticatedUserTargetGroup();
-        List<String> userIds = Arrays.asList(userId);
+        List<String> userIds = Arrays.asList(userInfoProxy.getAuthenticatedUser());
         if (targetGroup.isPresent()) {
             userIds = userInfoProxy.getUsersForGroup(targetGroup.get());
         }
@@ -78,7 +78,6 @@ public class AccountDelegate
             aw.setData( mapper.fromEntityToDto(ae));
             return aw;
         }).collect(Collectors.toList());
-
     }
 
     public AccountWrapper getAccount(Long accountId)
@@ -99,6 +98,15 @@ public class AccountDelegate
     }
 
     public UserAccountRightsPattern getUserAccountRights(Long accountId) {
-        return Optional.ofNullable(accountDao.getUserAccountRights(userInfoProxy.getAuthenticatedUser() , accountId)).map(UserAccountRightsPattern::from).orElseThrow( () -> new UnrelatedAccountException(String.format("Authenticated user : %s has no rights on account : %d", userInfoProxy.getAuthenticatedUser(), accountId)) );
+        return getUserAccountRights(accountId, userInfoProxy.getAuthenticatedUser());
+    }
+
+    public UserAccountRightsPattern getUserAccountRights(Long accountId, String userId) {
+        return Optional.ofNullable(accountDao.getUserAccountRights(userId , accountId)).map(UserAccountRightsPattern::from).orElseThrow( () -> new UnrelatedAccountException(String.format("User : %s has no rights on account : %d", userInfoProxy.getAuthenticatedUser(), accountId)) );
+    }
+
+    public UserAccountRights fetchUserAccountRights(Long accountId, String userId) {
+        UserAccountRightsMapper mapper = Mappers.getMapper(UserAccountRightsMapper.class);
+        return mapper.fromRightPatternToDto(getUserAccountRights(accountId, userId));
     }
 }

@@ -143,6 +143,68 @@ paths:
           description: "Invalid input"
         409:
           description: "User already exists"
+    get:
+      summary: Returns the users that are part of the same group as the authenticated user.  "group_admin" role is required.
+      tags:
+        - users
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        403:
+          description: \"group_admin\" role is required
+  /accounts:
+    get:
+      summary: Returns all accounts associated to the group of the authenticated user.  "group_admin" role is required.
+      tags:
+        - accounts
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AccountWrapper'
+        403:
+          description: \"group_admin\" role is required
+  /users/{userId}/accounts/{accountId}/rights:
+    get:
+      summary: Returns the account rights for the specified user and account.  "group_admin" role is required if the specified user is not the authenticated user.
+      tags:
+        - users
+        - accounts
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          type: string
+          format: string
+        - name: accountId
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: success
+          schema:
+            $ref: '#/definitions/UserAccountRights'
+
 definitions:
   User:
     type: object
@@ -165,3 +227,14 @@ definitions:
         type: string
       desc:
         type: string
+  UserAccountRights:
+    type: object
+    properties:
+      isOwner:
+        type: boolean
+      isAdmin:
+        type: boolean
+      isTransfer:
+        type: boolean
+      isRead:
+        type: boolean

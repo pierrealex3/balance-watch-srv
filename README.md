@@ -14,6 +14,12 @@ MySQL User Account:
 user: springuser
 pass: GoGoPass321!
 
+admin
+Xaxx6543
+
+root
+Zazz6543
+
 #########################
 ## NGINX config for http { block directive
 #########################
