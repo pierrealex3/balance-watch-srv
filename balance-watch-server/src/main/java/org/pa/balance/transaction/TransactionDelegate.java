@@ -207,6 +207,7 @@ public class TransactionDelegate {
 
             te.setTtIdGen(tte.getTt_id());    // useful for tracing the origin of a transaction: tt-generated or created manually?
             te.setAcctId(tte.getAcctId());
+            te.setActionFlags(new TransactionFlags.TransactionFlagsBuilder().addGenerated().build().getFlags());
 
             TransactionEntity teConn = Optional.ofNullable(tte.getAcctIdConn()).map( a -> this.addConnectedTransaction(te, tte.getAcctIdConn(), false) ).orElse(null);
 
