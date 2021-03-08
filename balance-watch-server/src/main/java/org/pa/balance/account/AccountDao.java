@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
@@ -45,18 +46,23 @@ public class AccountDao
     }
 
     @Transactional
-    public List<AccountEntity> getAllAccessibleAccounts(List<String> userIds) {
-        List<AccountEntity> accountList = userAccountRightsRepo.findAllByIdUserIdIn(userIds).map( uare -> uare.getId().getAccount() ).collect(Collectors.toList());
-        if (accountList.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Cannot find any accounts associated with userIds : %s", "CHANGETHAT"));
+    public Set<AccountEntity> getAllAccessibleAccounts(List<String> userIds) {
+        Set<AccountEntity> accountSet = userAccountRightsRepo.findAllByIdUserIdIn(userIds).map( uare -> uare.getId().getAccount() ).collect(Collectors.toSet());
+        if (accountSet.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Cannot find any accounts associated with userIds : %s", userIds));
         }
-        return accountList;
+        return accountSet;
     }
 
     @Transactional
-    public Integer getUserAccountRights(String userId, Long accountId) {
+    public Integer getUserAccountRightsPattern(String userId, Long accountId) {
         UserAccountRightsEntity uare = userAccountRightsRepo.findByIdUserIdAndIdAccountId(userId, accountId);
         return uare == null ? null : uare.getRightPattern();
+    }
+
+    @Transactional
+    public UserAccountRightsEntity getUserAccountRights(String userId, Long accountId) {
+        return userAccountRightsRepo.findByIdUserIdAndIdAccountId(userId, accountId);
     }
 
     @Transactional
@@ -71,5 +77,10 @@ public class AccountDao
         AccountEntity managed = getAccount(accountId);
         AccountMapper m = Mappers.getMapper(AccountMapper.class);
         m.fromDetachedToManaged(detached, managed);
+    }
+
+    @Transactional
+    public void saveUserAccountRights(UserAccountRightsEntity uare) {
+        userAccountRightsRepo.save(uare);
     }
 }

@@ -9,7 +9,6 @@ import org.pa.balance.user.UserDao;
 import org.pa.balance.user.UserEntity;
 import org.pa.balance.user.info.UserInfoProxy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -102,11 +101,26 @@ public class AccountDelegate
     }
 
     public UserAccountRightsPattern getUserAccountRights(Long accountId, String userId) {
-        return Optional.ofNullable(accountDao.getUserAccountRights(userId , accountId)).map(UserAccountRightsPattern::from).orElseThrow( () -> new UnrelatedAccountException(String.format("User : %s has no rights on account : %d", userInfoProxy.getAuthenticatedUser(), accountId)) );
+        return Optional.ofNullable(accountDao.getUserAccountRightsPattern(userId , accountId)).map(UserAccountRightsPattern::from).orElseThrow( () -> new UnrelatedAccountException(String.format("User : %s has no rights on account : %d", userInfoProxy.getAuthenticatedUser(), accountId)) );
     }
 
     public UserAccountRights fetchUserAccountRights(Long accountId, String userId) {
         UserAccountRightsMapper mapper = Mappers.getMapper(UserAccountRightsMapper.class);
         return mapper.fromRightPatternToDto(getUserAccountRights(accountId, userId));
+    }
+
+    public void createUserAccountRights(String userId, Long accountId, UserAccountRights body) {
+        UserAccountRightsEntity uare = new UserAccountRightsEntity();
+        uare.setRightPattern(UserAccountRightsMapper.fromDtoToRightPattern(body).getRightsPattern());
+
+        UserAccountRightsEntityId uareId = new UserAccountRightsEntityId(userDao.getUser(userId), accountDao.getAccount(accountId));
+        uare.setId(uareId);
+        accountDao.saveUserAccountRights(uare);
+    }
+
+    public void updateUserAccountRights(String userId, Long accountId, UserAccountRights body) {
+        UserAccountRightsEntity uare = accountDao.getUserAccountRights(userId, accountId);
+        uare.setRightPattern(UserAccountRightsMapper.fromDtoToRightPattern(body).getRightsPattern());
+        accountDao.saveUserAccountRights(uare);
     }
 }

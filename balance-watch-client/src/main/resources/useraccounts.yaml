@@ -204,6 +204,68 @@ paths:
           description: success
           schema:
             $ref: '#/definitions/UserAccountRights'
+        403:
+          description: \"group_admin\" role is required if the specified user is not the authenticated user.
+    put:
+      summary: Updates the account rights for the specified user and account.  "group_admin" role is always required.
+      tags:
+        - users
+        - accounts
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAccountRights'
+        - name: userId
+          in: path
+          required: true
+          type: string
+          format: string
+        - name: accountId
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: success
+        403:
+          description: \"group_admin\" role is always required.
+    post:
+      summary: Associates user account rights to the specified user and account.  "group_admin" role is always required.
+      tags:
+        - users
+        - accounts
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAccountRights'
+        - name: userId
+          in: path
+          required: true
+          type: string
+          format: string
+        - name: accountId
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        201:
+          description: success
+        403:
+          description: \"group_admin\" role is always required.
 
 definitions:
   User:

@@ -86,4 +86,22 @@ public class UserController implements UsersApi
         }
         return new ResponseEntity<>(accountDelegate.fetchUserAccountRights(accountId, userId), HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<Void> usersUserIdAccountsAccountIdRightsPost(String userId, Long accountId, @Valid UserAccountRights body) {
+        if (!userInfoProxy.isAuthenticatedUserGroupAdmin()) {
+            throw new UnauthorizedUserException("Authenticated user does not have the \"group_admin\" role required to create account rights");
+        }
+        accountDelegate.createUserAccountRights(userId, accountId, body);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<Void> usersUserIdAccountsAccountIdRightsPut(String userId, Long accountId, @Valid UserAccountRights body) {
+        if (!userInfoProxy.isAuthenticatedUserGroupAdmin()) {
+            throw new UnauthorizedUserException("Authenticated user does not have the \"group_admin\" role required to update account rights");
+        }
+        accountDelegate.updateUserAccountRights(userId, accountId, body);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

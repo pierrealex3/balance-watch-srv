@@ -13,4 +13,18 @@ public interface UserAccountRightsMapper {
     @Mapping(target = "isTransfer", expression = "java(p.isTransfer())")
     @Mapping(target = "isRead", expression = "java(p.isRead())")
     public UserAccountRights fromRightPatternToDto(UserAccountRightsPattern p);
+
+
+    static UserAccountRightsPattern fromDtoToRightPattern(UserAccountRights r) {
+        UserAccountRightsPattern.UserAccountRightsPatternBuilder b = new UserAccountRightsPattern.UserAccountRightsPatternBuilder();
+        if (r.getIsOwner())
+            b.addOwner();
+        if (r.getIsAdmin())
+            b.addAdmin();
+        if (r.getIsTransfer())
+            b.addTransfer();
+        if (r.getIsRead())
+            b.addRead();
+        return b.build();
+    }
 }
