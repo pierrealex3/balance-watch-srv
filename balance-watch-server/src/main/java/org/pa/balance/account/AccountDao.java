@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,7 +49,10 @@ public class AccountDao
 
     @Transactional
     public Set<AccountEntity> getAllAccessibleAccounts(List<String> userIds) {
-        Set<AccountEntity> accountSet = userAccountRightsRepo.findAllByIdUserIdIn(userIds).map( uare -> uare.getId().getAccount() ).collect(Collectors.toSet());
+        Set<AccountEntity> accountSet = userAccountRightsRepo.findAllByIdUserIdIn(userIds)
+                .map( uare -> uare.getId().getAccount() )
+                .sorted(Comparator.comparing(AccountEntity::getAccountNumber))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         if (accountSet.isEmpty()) {
             throw new EntityNotFoundException(String.format("Cannot find any accounts associated with userIds : %s", userIds));
         }

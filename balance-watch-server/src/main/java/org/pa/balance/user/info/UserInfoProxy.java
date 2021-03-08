@@ -9,10 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserInfoProxy
@@ -27,7 +25,7 @@ public class UserInfoProxy
     }
 
     public List<String> getUsersForGroup(String internalGroupId) {
-        return userInfoDelegate.getUsersForGroup(internalGroupId);
+        return userInfoDelegate.getUsersForGroup(internalGroupId).stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
     }
 
     public String getAuthenticatedUser() {
