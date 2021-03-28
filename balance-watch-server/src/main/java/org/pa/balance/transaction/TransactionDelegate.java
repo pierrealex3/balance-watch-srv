@@ -121,12 +121,10 @@ public class TransactionDelegate {
         TransactionFlags.TransactionFlagsBuilder tb = new TransactionFlags.TransactionFlagsBuilder();
         tb  = manual ? tb.addManual() : tb.addGenerated();
 
-        if (!rightsPattern.isAdmin()) {
-            tb.addSubmitted();  // this will result in the transaction to be accepted by someone with admin rights on the connected account side.
-        }
         TransactionFlags tf = tb.build();
 
         TransactionEntity teConn = generateConnectedTransactionEntity(te, connectedAccount);
+
         teConn.setActionFlags(tf.getFlags());
         return teConn;
     }
@@ -139,7 +137,6 @@ public class TransactionDelegate {
      * @return
      */
     TransactionEntity generateConnectedTransactionEntity(TransactionEntity te, Long connectedAccount) {
-        TransactionEntity teConn = null;
         try
         {
             var baos = new ByteArrayOutputStream();
@@ -148,14 +145,15 @@ public class TransactionDelegate {
 
             var bais = new ByteArrayInputStream(baos.toByteArray());
             var ois = new ObjectInputStream(bais);
-            teConn = (TransactionEntity) ois.readObject();
+            final TransactionEntity teConn = (TransactionEntity) ois.readObject();
+
+            teConn.setAcctId(connectedAccount);
+            teConn.setWay( te.getWay() == TransactionWay.DEBIT ? TransactionWay.CREDIT : TransactionWay.DEBIT ) ;
+
+            return teConn;
         } catch (Exception e) {
             throw new InternalException("Problem while deep cloning the TransactionEntity for the connected-account side");
         }
-
-        teConn.setAcctId(connectedAccount);
-        teConn.setWay( te.getWay() == TransactionWay.DEBIT ? TransactionWay.CREDIT : TransactionWay.DEBIT ) ;
-        return teConn;
     }
 
     public long updateTransaction(Transaction t, Long id, Long lastModifiedEpoch) {

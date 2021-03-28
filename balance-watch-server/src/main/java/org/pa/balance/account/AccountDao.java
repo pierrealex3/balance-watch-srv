@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -36,6 +34,22 @@ public class AccountDao
         userAccountRightsRepo.save(uare);
 
         return aee.getId();
+    }
+
+    /**
+     * Get all the accounts associated to a specific user id, for which a specific right right is given - showcased by the predicate
+     * @param userId
+     * @param userAccountRightsPatternPredicate
+     * @return
+     */
+    @Transactional
+    public List<AccountEntity> getAllAccessibleAccountsForSpecificRight(String userId, Predicate<UserAccountRightsPattern> userAccountRightsPatternPredicate) {
+        List<AccountEntity> accountEntityList = userAccountRightsRepo.findByIdUserId(userId)
+                .filter( p -> userAccountRightsPatternPredicate.test(UserAccountRightsPattern.from(p.getRightPattern())) )
+                .map( uare -> uare.getId().getAccount() )
+                .collect(Collectors.toList());
+
+        return Optional.ofNullable(accountEntityList).orElseThrow( () -> new EntityNotFoundException(String.format("Cannot find any accounts with the rights to transfer associated with userId : %s", userId)) );
     }
 
     @Transactional

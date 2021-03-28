@@ -44,17 +44,47 @@ public class AccountDelegate
         return accountDao.addAccount(ae, ue, rightsPattern);
     }
 
-    public List<AccountWrapper> getAccounts(String userId)
-    {
-        userDao.getUser(userId);    // will throw if not found
+    /**
+     * Wrap accounts returned by the dao layer.
+     * @param accountEntityList
+     * @return
+     */
+    List<AccountWrapper> wrapAccounts(List<AccountEntity> accountEntityList) {
         AccountMapper mapper = Mappers.getMapper(AccountMapper.class);
 
-        return accountDao.getAllAccessibleAccounts(userId).stream().map( ae -> {
+        return accountEntityList.stream().map(ae -> {
             var aw = new AccountWrapper();
             aw.setId(ae.getId());
             aw.setData( mapper.fromEntityToDto(ae));
             return aw;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * Get accounts available to transfer to.
+     * @param userId
+     * @return
+     */
+    public List<AccountWrapper> getAccountsForTransfer(String userId) {
+        return wrapAccounts(accountDao.getAllAccessibleAccountsForSpecificRight(userId, UserAccountRightsPattern::isTransfer));
+    }
+
+    /**
+     * Get accounts available for read.
+     * @param userId
+     * @return
+     */
+    public List<AccountWrapper> getAccountsForRead(String userId) {
+        return wrapAccounts(accountDao.getAllAccessibleAccountsForSpecificRight(userId, UserAccountRightsPattern::isRead));
+    }
+
+    /**
+     * Get all accounts for which an access has been made available.
+     * @param userId
+     * @return
+     */
+    public List<AccountWrapper> getAllAccessibleAccounts(String userId) {
+        return wrapAccounts(accountDao.getAllAccessibleAccounts(userId));
     }
 
     /**

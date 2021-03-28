@@ -43,4 +43,7 @@ public class TransactionEntity implements Serializable
     @OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL)
     private transient Reminder reminder;
 
+    @Column(name="conn_stat", length = 1)
+    private ConnectivityStatus connectivityStatus;
+
 }

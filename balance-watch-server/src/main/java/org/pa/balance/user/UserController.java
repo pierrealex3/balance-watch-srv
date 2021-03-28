@@ -1,6 +1,5 @@
 package org.pa.balance.user;
 
-import org.keycloak.authorization.client.util.Http;
 import org.pa.balance.account.repository.AccountDelegate;
 import org.pa.balance.client.api.UsersApi;
 import org.pa.balance.client.model.Account;
@@ -67,7 +66,7 @@ public class UserController implements UsersApi
     @Override
     public ResponseEntity<List<AccountWrapper>> usersUserIdAccountsGet(String userId)
     {
-        List<AccountWrapper> accountWrapperList = accountDelegate.getAccounts(userId);
+        List<AccountWrapper> accountWrapperList = accountDelegate.getAccountsForTransfer(userId);
         return new ResponseEntity<>(accountWrapperList, HttpStatus.OK);
     }
 

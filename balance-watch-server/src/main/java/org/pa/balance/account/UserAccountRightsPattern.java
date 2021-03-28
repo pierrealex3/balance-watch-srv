@@ -1,9 +1,8 @@
 package org.pa.balance.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.Optional;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +13,7 @@ public class UserAccountRightsPattern
     private Integer rightsPattern = 0;
 
     public static UserAccountRightsPattern from(Integer rightsPattern) {
-        return new UserAccountRightsPattern(rightsPattern);
+        return new UserAccountRightsPattern(Optional.ofNullable(rightsPattern).orElse(0));
     }
 
     public boolean isOwner() {
