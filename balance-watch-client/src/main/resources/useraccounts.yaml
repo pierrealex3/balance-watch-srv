@@ -3,7 +3,7 @@ info:
   description: "User Account API"
   title: "Balance Watch: Users and Accounts API"
   version: "1.0.0"
-basePath: "/watch"
+basePath: "/mdsui"
 
 paths:
   /users/{userId}/accounts:
@@ -18,6 +18,14 @@ paths:
           required: true
           type: string
           format: string
+        - name: rights
+          in: query
+          required: false
+          type: string
+          enum:
+            - TRANSFER
+            - READ
+          default: TRANSFER
       responses:
         200:
           description: "Success"
@@ -182,8 +190,7 @@ paths:
     get:
       summary: Returns the account rights for the specified user and account.  "group_admin" role is required if the specified user is not the authenticated user.
       tags:
-        - users
-        - accounts
+        - user accounts
       consumes:
         - application/json
       produces:
@@ -209,8 +216,7 @@ paths:
     put:
       summary: Updates the account rights for the specified user and account.  "group_admin" role is always required.
       tags:
-        - users
-        - accounts
+        - user accounts
       consumes:
         - application/json
       produces:
@@ -239,8 +245,7 @@ paths:
     post:
       summary: Associates user account rights to the specified user and account.  "group_admin" role is always required.
       tags:
-        - users
-        - accounts
+        - user accounts
       consumes:
         - application/json
       produces:

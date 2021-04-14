@@ -180,6 +180,11 @@ definitions:
         $ref: "#/definitions/Transaction"
   Transaction:
     type: "object"
+    required:
+      - date
+      - type
+      - amount
+      - way
     properties:
       date:
         type: "string"

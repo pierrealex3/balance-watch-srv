@@ -64,9 +64,16 @@ public class UserController implements UsersApi
      * @return
      */
     @Override
-    public ResponseEntity<List<AccountWrapper>> usersUserIdAccountsGet(String userId)
+    public ResponseEntity<List<AccountWrapper>> usersUserIdAccountsGet(String userId, String rights)
     {
-        List<AccountWrapper> accountWrapperList = accountDelegate.getAccountsForTransfer(userId);
+        List<AccountWrapper> accountWrapperList;
+        if ("READ".equals(rights))
+            accountWrapperList = accountDelegate.getAccountsForRead(userId);
+        else if ("TRANSFER".equals(rights))
+            accountWrapperList = accountDelegate.getAccountsForTransfer(userId);
+        else
+            accountWrapperList = accountDelegate.getAccountsForTransfer(userId);
+
         return new ResponseEntity<>(accountWrapperList, HttpStatus.OK);
     }
 
